@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /dashboard
+Disallow: /create-super-admin
+
+Sitemap: https://cortiqx.in/sitemap.xml

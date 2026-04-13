@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="CortiqX">
+  <defs>
+    <linearGradient id="cxg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0891b2"/>
+      <stop offset="55%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#db2777"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#cxg)"/>
+  <text x="600" y="300" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="96" font-weight="700">CortiqX</text>
+  <text x="600" y="380" text-anchor="middle" fill="rgba(255,255,255,0.92)" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="30" font-weight="600">Ideas to launch. Products that last.</text>
+  <text x="600" y="430" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="22">cortiqx.in</text>
+</svg>
