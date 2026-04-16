@@ -224,13 +224,13 @@ function ScrollStackScene({ projects, header }) {
   const isWideDesktop = useMediaQuery('(min-width: 1441px)')
 
   // Discrete timing: each card takes exactly 100vh of scroll distance
-  const vhPerCard = 100 
+  const vhPerCard = 100
   const holdVh = 100
-  const tailVh = 100 
-  
+  const tailVh = 100
+
   const totalAnimVh = Math.max(0, n - 1) * vhPerCard
   const trackVh = totalAnimVh + holdVh + tailVh
-  
+
   const timing = {
     card0Hold: holdVh / trackVh,
     buildEnd: (holdVh + totalAnimVh) / trackVh
@@ -265,9 +265,9 @@ function ScrollStackScene({ projects, header }) {
       >
         {/* Sticky Header: Visible throughout the stack movement */}
         <div className="fyw-stack-scene__sticky-header">
-           <div className="fyw-container">
+          <div className="fyw-container">
             {header}
-           </div>
+          </div>
         </div>
 
         <div className="fyw-container fyw-stack-scene__layers">
@@ -288,28 +288,28 @@ function ScrollStackScene({ projects, header }) {
 
       {/* Snap points for discrete scrolling: One notch = one card */}
       {Array.from({ length: n }).map((_, i) => {
-          const { card0Hold, buildEnd } = timing
-          const buildSpan = buildEnd - card0Hold
-          const seg = buildSpan / Math.max(n - 1, 1)
-          const snapT = i === 0 ? 0 : card0Hold + (i - 1) * seg + seg / 2
-          // Note: i=0 is start. i=1 is when card 1 lands, etc.
-          // We adjust snap points to be in the 'holding' phase of each card.
-          return (
-            <div
-              key={i}
-              className="fyw-stack-scene__snap-marker"
-              style={{
-                position: 'absolute',
-                top: `${snapT * 100}%`,
-                height: '1px',
-                width: '100%',
-                pointerEvents: 'none',
-                scrollSnapAlign: 'start',
-                scrollSnapStop: 'always',
-              }}
-            />
-          )
-        })}
+        const { card0Hold, buildEnd } = timing
+        const buildSpan = buildEnd - card0Hold
+        const seg = buildSpan / Math.max(n - 1, 1)
+        const snapT = i === 0 ? 0 : card0Hold + (i - 1) * seg + seg / 2
+        // Note: i=0 is start. i=1 is when card 1 lands, etc.
+        // We adjust snap points to be in the 'holding' phase of each card.
+        return (
+          <div
+            key={i}
+            className="fyw-stack-scene__snap-marker"
+            style={{
+              position: 'absolute',
+              top: `${snapT * 100}%`,
+              height: '1px',
+              width: '100%',
+              pointerEvents: 'none',
+              scrollSnapAlign: 'start',
+              scrollSnapStop: 'always',
+            }}
+          />
+        )
+      })}
     </div>
   )
 }
@@ -374,15 +374,6 @@ export default function Projects() {
       >
         Featured projects
       </motion.h2>
-      <motion.p
-        className="fyw-section__lede"
-        initial={{ opacity: 0, y: 22 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={FYW_VIEWPORT_REPEAT}
-        transition={fywRevealTransition(0.06)}
-      >
-        Discover how our technology-driven solutions empower businesses and turn ideas into real, impactful products.
-      </motion.p>
     </>
   )
 

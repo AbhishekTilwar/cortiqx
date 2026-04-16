@@ -97,7 +97,7 @@
 .projects-page__preview img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .projects-page__preview-placeholder {
@@ -119,11 +119,11 @@
 }
 
 .projects-page__body {
-  padding: 1.25rem 1.35rem 1.5rem;
+  padding: 1.25rem 1.5rem 1.5rem;
   display: flex;
   flex-direction: column;
   flex: 1;
-  gap: 0.65rem;
+  gap: 0.5rem;
 }
 
 .projects-page__meta-row {
@@ -167,12 +167,12 @@
 
 .projects-page__card-desc {
   margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.55;
+  font-size: 0.88rem;
+  line-height: 1.5;
   color: var(--fyw-muted);
   flex: 1;
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -180,10 +180,10 @@
 .projects-page__tech {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 0 0.2rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem;
+  gap: 0.45rem;
 }
 
 .projects-page__tech li {
