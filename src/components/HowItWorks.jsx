@@ -2,12 +2,10 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import {
   motion,
   useMotionValueEvent,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
 } from 'framer-motion'
-import { FYW_VIEWPORT, FYW_EASE, fywRevealTransition } from '../lib/fywMotion.js'
 
 const steps = [
   {
@@ -42,6 +40,8 @@ const steps = [
   },
 ]
 
+const vp = { once: true, amount: 0.12 }
+
 function useStepReveal(scroll, t0, t1) {
   const fadeEnd = Math.min(t0 + 0.09, t1)
   const opacity = useTransform(scroll, [t0, fadeEnd, 1], [0, 1, 1])
@@ -60,14 +60,13 @@ function activeStepIndex(t) {
   return Math.min(4, Math.max(0, Math.floor(Number(t) * 5)))
 }
 
-function HowProcessRail({ progress, steps: items, railScrollRef, activeStep }) {
+function HowProcessRail({ progress, steps: items, railScrollRef, activeStep, isMobile }) {
   const lineFill = useTransform(progress, [0, 1], [0, 1])
-  // Tighter scroll bands so the rail completes in ~65% of section progress (snappier than 0–0.86)
-  const s0 = useStepReveal(progress, 0, 0.12)
-  const s1 = useStepReveal(progress, 0.13, 0.25)
-  const s2 = useStepReveal(progress, 0.26, 0.38)
-  const s3 = useStepReveal(progress, 0.39, 0.51)
-  const s4 = useStepReveal(progress, 0.52, 0.64)
+  const s0 = useStepReveal(progress, 0, 0.16)
+  const s1 = useStepReveal(progress, 0.17, 0.33)
+  const s2 = useStepReveal(progress, 0.34, 0.5)
+  const s3 = useStepReveal(progress, 0.51, 0.67)
+  const s4 = useStepReveal(progress, 0.68, 0.86)
   const stopsMotion = [s0, s1, s2, s3, s4]
 
   return (
@@ -103,7 +102,8 @@ function HowProcessRail({ progress, steps: items, railScrollRef, activeStep }) {
                 <motion.div
                   key={step.n}
                   className={`fyw-how-rail__stop${activeStep === i ? ' fyw-how-rail__stop--active' : ''}`}
-                  style={{ opacity: stopsMotion[i].opacity, y: stopsMotion[i].y }}
+                  style={isMobile ? { opacity: 1, y: 0 } : { opacity: stopsMotion[i].opacity, y: stopsMotion[i].y }}
+                  aria-hidden
                 >
                   <span className="fyw-how-rail__dot" />
                   <div className="fyw-how-rail__content">
@@ -138,23 +138,22 @@ function HowProcessRail({ progress, steps: items, railScrollRef, activeStep }) {
 export default function HowItWorks() {
   const trackRef = useRef(null)
   const railScrollRef = useRef(null)
-  const detailScrollRef = useRef(null)
-  const reduceMotion = useReducedMotion()
-  const [activeStep, setActiveStep] = useState(0)
 
-  // Track is 400vh to give plenty of room for 5 stages
-  const trackVh = 400
+  const [activeStep, setActiveStep] = useState(0)
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false
+  )
 
   const { scrollYProgress } = useScroll({
     target: trackRef,
-    offset: ['start start', 'end end'],
+    offset: ['start 80%', 'end 20%'],
   })
 
-  // Snappier spring than featured stack: this section is informational, not snap-aligned
+  // Smooth out the scroll progress for a high-end feel
   const progress = useSpring(scrollYProgress, {
-    stiffness: 160,
-    damping: 36,
-    mass: 0.28,
+    stiffness: 60,
+    damping: 32,
+    mass: 0.5,
     restDelta: 0.0002,
   })
 
@@ -165,44 +164,59 @@ export default function HowItWorks() {
 
   useLayoutEffect(() => {
     const v = progress.get()
-    setActiveStep(activeStepIndex(v))
+    const mq = window.matchMedia('(max-width: 767px)')
+    const onMq = () => setIsMobile(mq.matches)
+    onMq()
+    mq.addEventListener('change', onMq)
+    
+    const applyMobileScrollSync = (val) => {
+      const railEl = railScrollRef.current
+      if (railEl) syncScrollToProgress(railEl, val)
+    }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (mq.matches) setActiveStep(activeStepIndex(v))
+    applyMobileScrollSync(v)
+
+    const railEl = railScrollRef.current
+    const ro = new ResizeObserver(() => {
+      if (!mq.matches) return
+      const t = progress.get()
+      syncScrollToProgress(railEl, t)
+    })
+    if (railEl) ro.observe(railEl)
+
+    return () => {
+      mq.removeEventListener('change', onMq)
+      ro.disconnect()
+    }
   }, [progress])
 
   return (
-    <section ref={trackRef} className="fyw-how-track" style={{ height: `${trackVh}vh` }}>
-      <div className="fyw-how-pin">
+    <section ref={trackRef} className="fyw-how-track">
         <div id="how-it-works" className="fyw-section fyw-how">
           <div className="fyw-container fyw-how__inner">
             <div className="fyw-how__title-block">
               <motion.h2
                 className="fyw-how__title-vertical"
-                initial={{ opacity: 0, y: 22 }}
+                initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={FYW_VIEWPORT}
-                transition={fywRevealTransition(0)}
+                viewport={vp}
               >
                 <span className="fyw-how__title-line">HOW</span>
                 <span className="fyw-how__title-line">IT</span>
                 <span className="fyw-how__title-line fyw-how__title-line--accent">WORKS</span>
               </motion.h2>
-              <motion.p
-                className="fyw-how__title-tagline"
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={FYW_VIEWPORT}
-                transition={fywRevealTransition(0.08)}
-              >
-                Five stages from first call to stores
-              </motion.p>
+              <p className="fyw-how__title-tagline">Five stages from first call to stores</p>
             </div>
 
             <div className="fyw-how__column">
               <motion.p
                 className="fyw-section__lede fyw-how__lede"
-                initial={{ opacity: 0, y: 18 }}
+                initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={FYW_VIEWPORT}
-                transition={fywRevealTransition(0.05)}
+                viewport={vp}
+                transition={{ delay: 0.04 }}
               >
                 Our streamlined process for building
                 <br className="fyw-how__lede-br" />
@@ -214,11 +228,12 @@ export default function HowItWorks() {
                 steps={steps}
                 railScrollRef={railScrollRef}
                 activeStep={activeStep}
+                isMobile={isMobile}
               />
+
             </div>
           </div>
         </div>
-      </div>
     </section>
   )
 }

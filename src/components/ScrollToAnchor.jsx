@@ -7,7 +7,7 @@ export default function ScrollToAnchor() {
     const scrollToElement = (id) => {
         const element = document.getElementById(id)
         if (element) {
-            element.scrollIntoView({ behavior: 'instant', block: 'start' })
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
     }
 
@@ -17,8 +17,9 @@ export default function ScrollToAnchor() {
                 scrollToElement(hash.slice(1))
             }, 100)
             return () => clearTimeout(timer)
+        } else {
+            window.scrollTo(0, 0)
         }
-        window.scrollTo(0, 0)
     }, [hash, pathname])
 
     useEffect(() => {

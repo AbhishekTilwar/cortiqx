@@ -1,8 +1,15 @@
 import { useRef, useState, useEffect } from 'react'
-import { motion, useMotionValue, useSpring, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { ConsultationButton } from './ConsultationLink.jsx'
-import { BRAND } from '../seo/brand.js'
-import { HERO_GIF_SOURCES, HERO_RABBIT_PNG } from '../data/heroAssets.js'
+
+const GIF_SOURCES = [
+  "https://user-images.githubusercontent.com/62280849/128852791-6fb73a65-29a6-4c5e-84c5-e8372ac2bd77.gif",
+  "https://camo.githubusercontent.com/d972b3fdd96f5bcda3cb22db4be78c78db577b6a4aa58d779523cc1f598f1e8d/68747470733a2f2f63646e2e6472696262626c652e636f6d2f75736572732f3733303730332f73637265656e73686f74732f363538313234332f6176656e746f2e676966",
+  "https://images.ctfassets.net/eut50lk49cau/33bXbuQrjaBNOSsZbame0y/ebac078b34681040d5cd5b9c47efbcb9/No-codeemailpagebuildersfordevelopers-ezgif.com-optimize__1_.gif",
+  "https://cdna.artstation.com/p/assets/images/images/073/492/620/original/umer-ahmed-developer-gif-animation.gif?1709777705",
+  "https://raw.githubusercontent.com/ankitpriyarup/ankitpriyarup/master/coder.gif",
+  "https://raw.githubusercontent.com/hasibul-hasan-shuvo/hasibul-hasan-shuvo/main/images/coding-boy.gif"
+];
 
 const RABBIT_QUOTES = [
   "Find me if you can! 🔍",
@@ -19,20 +26,13 @@ export default function Hero() {
   const [isHovered, setIsHovered] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const [svgSize, setSvgSize] = useState({ w: 1000, h: 1000 })
-  const [gifs, setGifs] = useState(HERO_GIF_SOURCES)
+  const [gifs, setGifs] = useState(GIF_SOURCES)
   const [rabbitPos, setRabbitPos] = useState({ x: 20, y: 30 })
   const [isHookHidden, setIsHookHidden] = useState(false)
   const [quoteIndex, setQuoteIndex] = useState(0)
 
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-  const reduceMotion = useReducedMotion()
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end start'],
-  })
-  const heroBgY = useTransform(scrollYProgress, [0, 1], [0, reduceMotion ? 0 : 56])
 
   // Taut, highly responsive spring for a detective tracing a page natively
   const springConfig = { damping: 25, stiffness: 200, mass: 0.5 }
@@ -202,20 +202,11 @@ export default function Hero() {
       {/* LAYER 0: The plain white screen base (bottom-most) */}
       <div style={{ position: 'absolute', inset: 0, zIndex: -1, backgroundColor: '#ffffff' }} />
 
-      {/* LAYER 1: Hero backdrop — subtle parallax on scroll for depth */}
-      <motion.div
-        aria-hidden
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 0,
-          y: heroBgY,
-          willChange: reduceMotion ? undefined : 'transform',
-        }}
-      >
+      {/* LAYER 1: The normal intact Hero grid background (NO MASK) */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
         <div className="fyw-hero__bg" aria-hidden />
         <div className="fyw-hero__grid" aria-hidden />
-      </motion.div>
+      </div>
 
       {/* LAYER 2: The secret background grid of GIFs, masked precisely to only exist inside the glass */}
       {!isMobile && (
@@ -237,8 +228,6 @@ export default function Hero() {
               key={`gif-slot-${index}`}
               src={src}
               alt="coding"
-              decoding="async"
-              fetchPriority={index < 3 ? 'high' : 'low'}
               style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }}
             />
           ))}
@@ -267,10 +256,8 @@ export default function Hero() {
             }}
           >
             <img
-              src={HERO_RABBIT_PNG}
+              src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Rabbit.png"
               alt="Hidden Rabbit"
-              decoding="async"
-              fetchPriority="low"
               style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
           </motion.div>
@@ -337,7 +324,9 @@ export default function Hero() {
             That Go Live Fast
           </h1>
 
-          <p className="fyw-hero__sub">{BRAND.heroSub}</p>
+          <p className="fyw-hero__sub">
+            We craft AI-powered Flutter apps that help startups and SMEs move faster and grow smarter.
+          </p>
 
           <div className="fyw-hero__actions">
             <a href="#projects" className="fyw-btn fyw-btn--outline">
@@ -408,10 +397,8 @@ export default function Hero() {
             filter: 'drop-shadow(0 15px 15px rgba(0,0,0,0.15))'
           }}>
             <img
-              src={HERO_RABBIT_PNG}
+              src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Rabbit.png"
               alt="Intro Rabbit"
-              decoding="async"
-              fetchPriority="high"
               style={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
           </div>

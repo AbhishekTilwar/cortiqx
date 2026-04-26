@@ -19,8 +19,6 @@ import {
   WEB_DEVELOPMENT_DOMAIN,
 } from '../utils/portfolioNormalize.js'
 import { useMediaQuery } from '../hooks/useMediaQuery.js'
-import { FYW_VIEWPORT, fywRevealTransition } from '../lib/fywMotion.js'
-import { preloadImageUrls } from '../lib/preloadImages.js'
 
 const staticWebProjects = staticProjects.filter((p) => p.domain === WEB_DEVELOPMENT_DOMAIN)
 
@@ -37,6 +35,8 @@ function liveUrlDisplay(url) {
   const cut = s.length > 42 ? `${s.slice(0, 40)}…` : s
   return cut
 }
+
+const vp = { once: true, amount: 0.15 }
 
 /** macOS-style window: traffic lights + content area (no device/laptop frame) */
 function DesktopWindow({ children, className = '', style = {} }) {
@@ -67,19 +67,11 @@ function useWebDevelopmentPortfolio() {
         const web = all.filter((p) => p.domain === WEB_DEVELOPMENT_DOMAIN)
         // No Firestore rows yet → show bundled samples; otherwise only real web-dev rows
         const list = web.length > 0 ? web : snap.docs.length === 0 ? staticWebProjects : []
-        preloadImageUrls(
-          list.map((p) => portfolioHeroImage(p)).filter(Boolean),
-          12
-        )
         setProjects(list)
         setReady(true)
       },
       (err) => {
         console.warn('[Built section / portfolio]', err?.code, err?.message)
-        preloadImageUrls(
-          staticWebProjects.map((p) => portfolioHeroImage(p)).filter(Boolean),
-          12
-        )
         setProjects(staticWebProjects)
         setReady(true)
       }
@@ -145,20 +137,14 @@ function BuiltScrollScene({ projects, header }) {
     return (
       <div className="fyw-built__simple-wrap">
         <div className="fyw-container fyw-built__scroll-inner fyw-built__simple">
-          {projects.map((p, imgIndex) => {
+          {projects.map((p) => {
             const src = portfolioHeroImage(p)
             const ph = liveUrlHref(p.url)
             return (
               <article key={p.id} className="fyw-built__simple-card">
                 <DesktopWindow className="fyw-built__window--simple">
                   {src ? (
-                    <img
-                      src={src}
-                      alt=""
-                      loading={imgIndex < 4 ? 'eager' : 'lazy'}
-                      decoding="async"
-                      {...(imgIndex === 0 ? { fetchPriority: 'high' } : imgIndex >= 4 ? { fetchPriority: 'low' } : {})}
-                    />
+                    <img src={src} alt="" loading="lazy" decoding="async" />
                   ) : (
                     <div
                       className="fyw-built__img-placeholder fyw-built__img-placeholder--in-window"
@@ -239,7 +225,6 @@ function BuiltScrollScene({ projects, header }) {
               const src = portfolioHeroImage(p)
               const angle = i * step
               const href = liveUrlHref(p.url)
-              const primeCarousel = i < 3
 
               return (
                 <div
@@ -267,13 +252,7 @@ function BuiltScrollScene({ projects, header }) {
                       <div className="fyw-built__carousel-image-side">
                         <div className="fyw-built__carousel-image-wrap">
                           {src ? (
-                            <img
-                              src={src}
-                              alt=""
-                              loading={primeCarousel ? 'eager' : 'lazy'}
-                              decoding="async"
-                              {...(i === 0 ? { fetchPriority: 'high' } : i >= 3 ? { fetchPriority: 'low' } : {})}
-                            />
+                            <img src={src} alt="" loading="lazy" decoding="async" />
                           ) : (
                             <div
                               className="fyw-built__img-placeholder fyw-built__img-placeholder--in-window"
@@ -369,19 +348,19 @@ export default function BuiltSection() {
             <motion.h2
               id="fyw-built-heading"
               className="fyw-section__title"
-              initial={{ opacity: 0, y: 28 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={FYW_VIEWPORT}
-              transition={fywRevealTransition(0)}
+              viewport={vp}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             >
               CortiqX is <span className="fyw-gradient-text">built</span>
             </motion.h2>
             <motion.p
               className="fyw-section__lede"
-              initial={{ opacity: 0, y: 22 }}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={FYW_VIEWPORT}
-              transition={fywRevealTransition(0.06)}
+              viewport={vp}
+              transition={{ duration: 0.45, delay: 0.04, ease: [0.22, 1, 0.36, 1] }}
             >
               Web development work from our portfolio—details and previews update as you scroll.
             </motion.p>

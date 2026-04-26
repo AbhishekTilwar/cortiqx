@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { FYW_VIEWPORT, fywRevealTransition } from '../lib/fywMotion.js'
 
 const items = [
   {
@@ -19,25 +18,27 @@ const items = [
   },
 ]
 
+const vp = { once: true, amount: 0.2 }
+
 export default function Services() {
   return (
     <section id="services" className="fyw-section fyw-services">
       <div className="fyw-container">
         <motion.h2
           className="fyw-section__title"
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0)}
+          viewport={vp}
+          transition={{ duration: 0.5 }}
         >
           Services We Provide
         </motion.h2>
         <motion.p
           className="fyw-section__lede"
-          initial={{ opacity: 0, y: 22 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0.06)}
+          viewport={vp}
+          transition={{ duration: 0.5, delay: 0.05 }}
         >
           We build robust apps through collaborative development that turns your vision into reality.
         </motion.p>
@@ -47,11 +48,11 @@ export default function Services() {
             <motion.article
               key={item.tag}
               className="fyw-service-card"
-              initial={{ opacity: 0, y: 32 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={FYW_VIEWPORT}
-              transition={fywRevealTransition(0.1 + i * 0.09)}
-              whileHover={{ y: -6, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } }}
+              viewport={vp}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              whileHover={{ y: -6, transition: { duration: 0.25 } }}
             >
               <p className="fyw-service-card__tag">{item.tag}</p>
               <h3>{item.title}</h3>

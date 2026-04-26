@@ -124,7 +124,7 @@ export default function Header() {
             </Magnetic>
           ))}
           <Magnetic>
-            <Link to="/Projects" className="fyw-nav__link">
+            <Link to="/#projects" className="fyw-nav__link">
               Projects
             </Link>
           </Magnetic>
@@ -242,7 +242,7 @@ export default function Header() {
                   </div>
                 </details>
               ))}
-              <Link to="/Projects" onClick={() => setMobileOpen(false)}>
+              <Link to="/#projects" onClick={() => setMobileOpen(false)}>
                 Projects
               </Link>
               <Link to="/#clients" onClick={() => setMobileOpen(false)}>

@@ -1,6 +1,6 @@
 // Domain slugs must match Services links: software-development, mobile-apps, web-development, ui-ux-design
 export const DOMAINS = {
-  'software-development': { label: 'Software Development', color: '#7c3aed' },
+  'software-development': { label: 'Software Development', color: '#00ff88' },
   'mobile-apps': { label: 'Mobile Apps', color: '#00d4ff' },
   'web-development': { label: 'Web Development', color: '#ff6b6b' },
   'ui-ux-design': { label: 'UI/UX Design', color: '#ffd93d' },

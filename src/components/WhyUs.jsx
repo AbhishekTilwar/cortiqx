@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { animate, motion, useInView } from 'framer-motion'
-import { FYW_VIEWPORT, FYW_EASE, fywRevealTransition } from '../lib/fywMotion.js'
 
 const stats = [
   { label: 'Projects Completed', count: 50, suffix: '+' },
@@ -8,6 +7,8 @@ const stats = [
   { label: 'Happy Clients', count: 30, suffix: '+' },
   { label: 'Years of Experience', count: 4, suffix: '+' },
 ]
+
+const vp = { once: true, amount: 0.25 }
 
 function StatCounter({ end, suffix, duration = 1.2 }) {
   const ref = useRef(null)
@@ -38,19 +39,17 @@ export default function WhyUs() {
       <div className="fyw-container">
         <motion.h2
           className="fyw-section__title"
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0)}
+          viewport={vp}
         >
           Why Us
         </motion.h2>
         <motion.p
           className="fyw-section__lede"
-          initial={{ opacity: 0, y: 22 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0.06)}
+          viewport={vp}
         >
           Passionate app developers dedicated to empowering businesses with innovative tech.
         </motion.p>
@@ -60,10 +59,10 @@ export default function WhyUs() {
             <motion.div
               key={s.label}
               className="fyw-stat"
-              initial={{ opacity: 0, scale: 0.96, y: 16 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={FYW_VIEWPORT}
-              transition={{ ...fywRevealTransition(i * 0.07), ease: FYW_EASE }}
+              initial={{ opacity: 0, scale: 0.94 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={vp}
+              transition={{ delay: i * 0.08, duration: 0.45 }}
             >
               <p className="fyw-stat__label">{s.label}</p>
               {'count' in s ? (

@@ -574,7 +574,7 @@ details[open].fyw-mobile-acc summary::after {
 
 /* Sections */
 .fyw-section {
-  padding: 88px 0;
+  padding: clamp(48px, 8vw, 88px) 0;
   scroll-margin-top: 84px;
 }
 
@@ -1387,17 +1387,17 @@ details[open].fyw-mobile-acc summary::after {
 
 .fyw-how-pin {
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 64px; /* Align near header instead of top zero */
+  padding: clamp(32px, 5vh, 64px) 0; /* Let the content dimensions dictate height instead of forcing 100vh */
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: visible;
+  overflow: clip; /* Clip waiting elements instead of spilling */
 }
 
 @media (max-width: 767px) {
   .fyw-how-pin {
-    height: 100dvh;
+    position: sticky;
   }
 }
 
@@ -1416,7 +1416,24 @@ details[open].fyw-mobile-acc summary::after {
 
 @media (max-width: 767px) {
   .fyw-how-rail__scroll {
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: visible;
+    overscroll-behavior-x: none;
+    scroll-padding-inline: max(16px, env(safe-area-inset-left, 0px));
+    margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+    padding-bottom: 10px;
+    scrollbar-width: none;
+    mask-image: linear-gradient(90deg,
+        transparent,
+        #000 14px,
+        #000 calc(100% - 14px),
+        transparent);
+  }
+
+  .fyw-how-rail__scroll:focus-visible {
+    box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.45);
+    border-radius: 12px;
   }
 
   .fyw-how-rail__track {
@@ -1504,10 +1521,12 @@ details[open].fyw-mobile-acc summary::after {
 
 @media (max-width: 767px) {
   .fyw-how-rail__stop {
-    flex: none;
-    align-items: flex-start;
-    text-align: left;
-    padding: 0;
+    flex: 0 0 124px;
+    min-width: 124px;
+  }
+
+  .fyw-how-rail__line {
+    top: 8px;
   }
 }
 
@@ -1680,17 +1699,15 @@ details[open].fyw-mobile-acc summary::after {
 
 @media (max-width: 767px) {
   .fyw-how__detail-scroll {
-    overflow-x: auto;
+    overflow-x: hidden;
     overflow-y: visible;
-    scroll-snap-type: x proximity;
     overscroll-behavior-x: none;
     scroll-padding-inline: max(16px, env(safe-area-inset-left, 0px));
     margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
     padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
     padding-top: 24px;
     padding-bottom: 12px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
+    scrollbar-width: none;
     mask-image: linear-gradient(90deg,
         transparent,
         #000 14px,
@@ -1748,8 +1765,6 @@ details[open].fyw-mobile-acc summary::after {
   .fyw-how__detail {
     flex: 0 0 min(82vw, 300px);
     max-width: 300px;
-    scroll-snap-align: center;
-    scroll-snap-stop: normal;
     transition:
       border-color 0.35s var(--fyw-ease-soft),
       box-shadow 0.35s var(--fyw-ease-soft),
@@ -1895,11 +1910,11 @@ details[open].fyw-mobile-acc summary::after {
 }
 
 .fyw-projects--stack .fyw-section__title {
-  margin-bottom: 12px;
+  margin-bottom: 2px;
 }
 
 .fyw-projects--stack .fyw-section__lede {
-  margin-bottom: clamp(32px, 5vh, 64px);
+  margin-bottom: clamp(12px, 3vh, 24px);
 }
 
 
@@ -1908,7 +1923,7 @@ details[open].fyw-mobile-acc summary::after {
 
 @media (max-width: 640px) {
   .fyw-projects--stack .fyw-section__lede {
-    margin-bottom: 20px;
+    margin-bottom: 8px;
   }
 }
 
@@ -1922,29 +1937,19 @@ details[open].fyw-mobile-acc summary::after {
 .fyw-stack-scene__pin {
   position: sticky;
   top: 64px;
-  overflow: visible;
-  /* Enough for first card; avoids a full viewport of dead space under the rim stack */
-  min-height: min(calc(100dvh - 64px), 720px);
+  overflow: clip; /* Prevents hidden cards from incorrectly showing in large scaled layout viewports */
+  padding-bottom: 24px;
 }
 
 @media (max-width: 900px) {
-  .fyw-stack-scene__pin {
-    /* Room for one tall mobile card + visible stacked rims */
-    min-height: min(calc(100dvh - 64px), 580px);
-  }
-
   .fyw-stack-scene__layers {
-    min-height: min(58dvh, 520px);
+    min-height: min(78dvh, 760px);
   }
 }
 
 @media (max-width: 480px) {
-  .fyw-stack-scene__pin {
-    min-height: min(calc(100dvh - 64px), 540px);
-  }
-
   .fyw-stack-scene__layers {
-    min-height: min(54dvh, 500px);
+    min-height: min(82dvh, 760px);
   }
 }
 
@@ -1953,7 +1958,7 @@ details[open].fyw-mobile-acc summary::after {
   width: 100%;
   isolation: isolate;
   /* ~one tall card; absolute layers do not stretch the box */
-  min-height: min(58vh, 560px);
+  min-height: min(68vh, 760px);
 }
 
 .fyw-stack-scene__layer {
@@ -2052,8 +2057,8 @@ details[open].fyw-mobile-acc summary::after {
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  padding: clamp(24px, 4vw, 40px);
+  gap: 16px;
+  padding: clamp(20px, 4vw, 40px);
 }
 
 .fyw-stack-card__copy {
@@ -2098,7 +2103,7 @@ details[open].fyw-mobile-acc summary::after {
   line-height: 1.22;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  margin: 0 0 1.35rem;
+  margin: 0 0 0.95rem;
   overflow-wrap: anywhere;
 }
 
@@ -2113,8 +2118,8 @@ details[open].fyw-mobile-acc summary::after {
 
 .fyw-stack-card__meta {
   display: grid;
-  gap: 14px;
-  margin-bottom: 28px;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 .fyw-stack-card__meta-cell {
@@ -2135,7 +2140,7 @@ details[open].fyw-mobile-acc summary::after {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--fyw-muted);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .fyw-stack-card__meta-v {
@@ -2182,7 +2187,7 @@ details[open].fyw-mobile-acc summary::after {
 
 .fyw-stack-card__visual--photo {
   align-items: flex-end;
-  min-height: 200px;
+  min-height: 160px;
 }
 
 .fyw-stack-card__photo {
@@ -3219,16 +3224,6 @@ details[open].fyw-mobile-acc summary::after {
   }
 }
 
-.fyw-footer__brand .fyw-footer__tagline {
-  margin: 14px 0 0;
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.45;
-  color: var(--fyw-text);
-  max-width: 320px;
-  letter-spacing: -0.01em;
-}
-
 .fyw-footer__brand p {
   margin: 16px 0 0;
   color: var(--fyw-muted);
@@ -3237,9 +3232,6 @@ details[open].fyw-mobile-acc summary::after {
   max-width: 300px;
 }
 
-.fyw-footer__brand p+p {
-  margin-top: 10px;
-}
 
 .fyw-logo--footer {
   margin-bottom: 0;
@@ -3296,28 +3288,4 @@ details[open].fyw-mobile-acc summary::after {
 
 .fyw-footer__bottom a {
   color: var(--fyw-accent);
-}
-
-/* Home — ambient depth behind sections (fixed; content scrolls over) */
-.fyw-home {
-  position: relative;
-  isolation: isolate;
-}
-
-.fyw-home::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 100% 70% at 50% -15%, rgba(124, 58, 237, 0.065), transparent 52%),
-    radial-gradient(ellipse 55% 45% at 100% 35%, rgba(8, 145, 178, 0.05), transparent 48%),
-    radial-gradient(ellipse 50% 40% at 0% 75%, rgba(219, 39, 119, 0.035), transparent 45%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fyw-home::before {
-    opacity: 0.92;
-  }
 }

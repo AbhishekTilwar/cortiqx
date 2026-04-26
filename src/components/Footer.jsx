@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import BrandLogo from './BrandLogo'
 import ConsultationLink from './ConsultationLink.jsx'
-import { BRAND } from '../seo/brand.js'
 
 export default function Footer() {
   return (
@@ -9,8 +8,10 @@ export default function Footer() {
       <div className="fyw-container fyw-footer__grid">
         <div className="fyw-footer__brand">
           <BrandLogo linkClassName="fyw-logo fyw-logo--footer" imgClassName="fyw-logo__img--footer" />
-          <p className="fyw-footer__tagline">{BRAND.tagline}</p>
-          <p>{BRAND.footerBlurb}</p>
+          <p>
+            CortiqX Labs — software, AI &amp; digital solutions. Trusted partner in digital delivery: apps, web, and design
+            from idea to launch.
+          </p>
         </div>
         <div>
           <h4>Product</h4>

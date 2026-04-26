@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion'
-import { FYW_VIEWPORT, FYW_EASE, fywRevealTransition } from '../lib/fywMotion.js'
 import { IoStar } from 'react-icons/io5'
 
 const quotes = [
@@ -59,6 +58,8 @@ function initials(name) {
     .toUpperCase()
 }
 
+const vp = { once: true, amount: 0.15 }
+
 export default function Testimonials() {
   return (
     <section id="testimonials" className="fyw-section fyw-testi">
@@ -66,19 +67,19 @@ export default function Testimonials() {
       <div className="fyw-container fyw-testi__inner">
         <motion.h2
           className="fyw-section__title"
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0)}
+          viewport={vp}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
           Testimonials
         </motion.h2>
         <motion.p
           className="fyw-section__lede"
-          initial={{ opacity: 0, y: 22 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0.06)}
+          viewport={vp}
+          transition={{ duration: 0.45, delay: 0.04, ease: [0.22, 1, 0.36, 1] }}
         >
           Real stories from businesses we&apos;ve helped build, launch, and grow.
         </motion.p>
@@ -88,10 +89,10 @@ export default function Testimonials() {
             <motion.article
               key={q.name}
               className="fyw-testi-card"
-              initial={{ opacity: 0, y: 34 }}
+              initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={FYW_VIEWPORT}
-              transition={{ ...fywRevealTransition(0.08 + i * 0.07), ease: FYW_EASE }}
+              viewport={vp}
+              transition={{ delay: i * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="fyw-testi-card__accent" aria-hidden />
               <div className="fyw-testi-card__top">

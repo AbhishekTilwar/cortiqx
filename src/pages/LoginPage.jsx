@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { FiMail, FiLock, FiLogIn, FiKey } from 'react-icons/fi'
 import { useAuth } from '../contexts/AuthContext'
 import BrandLogo from '../components/BrandLogo'
-import Seo from '../seo/Seo.jsx'
 import './LoginPage.css'
 
 export default function LoginPage() {
@@ -59,12 +58,6 @@ export default function LoginPage() {
 
   return (
     <div className="fyw-login">
-      <Seo
-        title="Team sign in"
-        description="Sign in to your CortiqX team dashboard."
-        path="/login"
-        noindex
-      />
       <div className="fyw-login__bg" aria-hidden />
       <motion.div
         className="fyw-login__card-wrap"

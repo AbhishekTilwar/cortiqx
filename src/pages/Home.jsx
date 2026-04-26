@@ -8,28 +8,20 @@ import BuiltSection from '../components/BuiltSection.jsx'
 import Testimonials from '../components/Testimonials.jsx'
 import ClientsSection from '../components/ClientsSection.jsx'
 import ContactSection from '../components/ContactSection.jsx'
-import Seo from '../seo/Seo.jsx'
-import HomeJsonLd from '../seo/HomeJsonLd.jsx'
-import { DEFAULT_DESCRIPTION } from '../seo/siteSeo.js'
-import { BRAND } from '../seo/brand.js'
 
 export default function Home() {
   return (
     <>
-      <Seo title={BRAND.homeTitleFocus} description={DEFAULT_DESCRIPTION} path="/" />
-      <HomeJsonLd />
-      <div className="fyw-home">
-        <Hero />
-        <Services />
-        <WhyUs />
-        <HowItWorks />
-        <TransformCta />
-        <Projects />
-        <BuiltSection />
-        <Testimonials />
-        <ClientsSection />
-        <ContactSection />
-      </div>
+      <Hero />
+      <Services />
+      <WhyUs />
+      <HowItWorks />
+      <TransformCta />
+      <Projects />
+      <BuiltSection />
+      <Testimonials />
+      <ClientsSection />
+      <ContactSection />
     </>
   )
 }

@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import { ConsultationButton } from './ConsultationLink.jsx'
-import { FYW_VIEWPORT, fywRevealTransition } from '../lib/fywMotion.js'
 
 export default function ContactSection() {
   return (
@@ -8,19 +7,17 @@ export default function ContactSection() {
       <div className="fyw-container">
         <motion.h2
           className="fyw-section__title"
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0)}
+          viewport={{ once: true }}
         >
           CONTACT US
         </motion.h2>
         <motion.p
           className="fyw-section__lede"
-          initial={{ opacity: 0, y: 22 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0.06)}
+          viewport={{ once: true }}
         >
           Don&apos;t wait! Build your product now and transform your vision into reality.
         </motion.p>
@@ -28,10 +25,9 @@ export default function ContactSection() {
         <div className="fyw-contact__grid">
           <motion.div
             className="fyw-contact__cta-block"
-            initial={{ opacity: 0, x: -28 }}
+            initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={FYW_VIEWPORT}
-            transition={fywRevealTransition(0.12)}
+            viewport={{ once: true }}
           >
             <h3>
               LET&apos;S BUILD SOMETHING
@@ -57,10 +53,9 @@ export default function ContactSection() {
 
           <motion.div
             className="fyw-contact__details"
-            initial={{ opacity: 0, x: 28 }}
+            initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={FYW_VIEWPORT}
-            transition={fywRevealTransition(0.18)}
+            viewport={{ once: true }}
           >
             <h3>GET IN TOUCH</h3>
             <ul>

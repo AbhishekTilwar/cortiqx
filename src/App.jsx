@@ -5,7 +5,6 @@ import './App.css'
 import Layout from './Layout.jsx'
 import Home from './pages/Home.jsx'
 import PricingPage from './pages/PricingPage.jsx'
-import ProjectsPage from './pages/ProjectsPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ProtectedRoute from './portal/ProtectedRoute.jsx'
 import CreateSuperAdmin from './portal/CreateSuperAdmin.jsx'
@@ -21,8 +20,6 @@ export default function App() {
             <Route element={<Layout />}>
               <Route path="/" element={<Home />} />
               <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/Projects" element={<ProjectsPage />} />
-              <Route path="/projects" element={<Navigate to="/Projects" replace />} />
             </Route>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/create-super-admin" element={<CreateSuperAdmin />} />

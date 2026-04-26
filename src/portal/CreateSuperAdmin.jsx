@@ -4,7 +4,6 @@ import { createUserWithEmailAndPassword, signOut } from 'firebase/auth'
 import { doc, setDoc, serverTimestamp, collection, query, where, getDocs, updateDoc } from 'firebase/firestore'
 import { auth, db } from '../firebase/config'
 import { FiUser, FiCheck, FiX } from 'react-icons/fi'
-import Seo from '../seo/Seo.jsx'
 import './CreateSuperAdmin.css'
 
 const CreateSuperAdmin = () => {
@@ -89,12 +88,6 @@ const CreateSuperAdmin = () => {
 
   return (
     <div className="create-super-admin">
-      <Seo
-        title="Setup"
-        description="Internal CortiqX setup."
-        path="/create-super-admin"
-        noindex
-      />
       <motion.div
         className="super-admin-card"
         initial={{ opacity: 0, y: 20 }}

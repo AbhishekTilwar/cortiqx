@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { FYW_VIEWPORT, FYW_EASE, fywRevealTransition } from '../lib/fywMotion.js'
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { db } from '../firebase/config'
-import { preloadImageUrls } from '../lib/preloadImages.js'
 import './ClientsSection.css'
+
+const vp = { once: true, amount: 0.2 }
 
 function domainHref(domain) {
   const d = (domain || '').trim()
@@ -13,7 +13,7 @@ function domainHref(domain) {
   return `https://${d}`
 }
 
-function ClientMark({ client, priority }) {
+function ClientMark({ client }) {
   const href = domainHref(client.domain)
   const label = client.name?.trim() || 'Client'
 
@@ -21,14 +21,7 @@ function ClientMark({ client, priority }) {
     <div className="fyw-clients__circle">
       <div className="fyw-clients__media">
         {client.logo ? (
-          <img
-            src={client.logo}
-            alt={label}
-            className="fyw-clients__img"
-            loading={priority ? 'eager' : 'lazy'}
-            decoding="async"
-            {...(priority ? { fetchPriority: 'high' } : {})}
-          />
+          <img src={client.logo} alt={label} className="fyw-clients__img" loading="lazy" decoding="async" />
         ) : (
           <span className="fyw-clients__initial" aria-hidden>
             {label.charAt(0).toUpperCase()}
@@ -58,12 +51,7 @@ export default function ClientsSection() {
     const unsub = onSnapshot(
       q,
       (snap) => {
-        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }))
-        preloadImageUrls(
-          list.map((c) => c.logo).filter(Boolean),
-          16
-        )
-        setClients(list)
+        setClients(snap.docs.map((d) => ({ id: d.id, ...d.data() })))
         setReady(true)
       },
       (err) => {
@@ -87,38 +75,34 @@ export default function ClientsSection() {
       <div className="fyw-container">
         <motion.h2
           className="fyw-section__title"
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0)}
+          viewport={vp}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         >
           Our clients
         </motion.h2>
         <motion.p
           className="fyw-section__lede"
-          initial={{ opacity: 0, y: 22 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={fywRevealTransition(0.06)}
+          viewport={vp}
+          transition={{ duration: 0.45, delay: 0.04, ease: [0.22, 1, 0.36, 1] }}
         >
           Organizations that partner with CortiqX to design, build, and ship Flutter apps and digital products.
         </motion.p>
 
         <motion.div
           className="fyw-clients__marquee-wrap"
-          initial={{ opacity: 0, y: 14 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={FYW_VIEWPORT}
-          transition={{ ...fywRevealTransition(0.12), ease: FYW_EASE }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={vp}
+          transition={{ duration: 0.5, delay: 0.08 }}
         >
           <div className="fyw-clients__marquee">
             <div className="fyw-clients__track">
               {trackItems.map((c, i) => (
-                <ClientMark
-                  key={`${c.id}-${i}`}
-                  client={c}
-                  priority={i < Math.min(clients.length, 10)}
-                />
+                <ClientMark key={`${c.id}-${i}`} client={c} />
               ))}
             </div>
           </div>

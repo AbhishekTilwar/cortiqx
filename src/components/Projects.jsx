@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'framer-motion'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { normalizeFeaturedProject } from '../data/featuredProjectThemes'
 import ConsultationLink from './ConsultationLink.jsx'
 import { useMediaQuery } from '../hooks/useMediaQuery.js'
-import { FYW_VIEWPORT_REPEAT, fywRevealTransition } from '../lib/fywMotion.js'
-import { preloadImageUrls } from '../lib/preloadImages.js'
 
 /**
  * Featured projects (Firestore `featuredProjects`, published + ordered):
@@ -15,6 +19,8 @@ import { preloadImageUrls } from '../lib/preloadImages.js'
  * 3) After all are stacked, keep scrolling to move past the scene.
  * Section is omitted when there are no published projects.
  */
+
+const sectionVp = { once: false, amount: 0.12, margin: '0px 0px -8% 0px' }
 
 const PEEK_DESKTOP = 13
 
@@ -110,7 +116,7 @@ function ProjectCardVisual({ project, index }) {
           className="fyw-stack-card__photo"
           loading="eager"
           decoding="async"
-          fetchPriority={index < 4 ? 'high' : 'low'}
+          {...(index === 0 ? { fetchPriority: 'high' } : {})}
         />
       </div>
     )
@@ -190,8 +196,9 @@ function useEnterBoost() {
     const u = () => {
       const h = window.innerHeight
       // Generous travel distance so each card visibly rises from below
+      // Enforce a strict minimum well beyond the 880px container max-height so they don't bleed out in scaled desktop views.
       const factor = window.innerWidth <= 640 ? 0.85 : 1.0
-      setPx(Math.round(h * factor))
+      setPx(Math.max(Math.round(h * factor), 1200))
     }
     u()
     window.addEventListener('resize', u)
@@ -241,8 +248,10 @@ function ScrollStackScene({ projects, header }) {
     offset: ['start start', 'end end'],
   })
 
-  // Raw scroll progress keeps card Y in lockstep with scroll-snap markers (spring caused lag / overshoot)
-  const progress = scrollYProgress
+  // Tight, snappy spring for precise discrete movement
+  const progress = useSpring(scrollYProgress, { 
+    stiffness: 60, damping: 32, mass: 0.5, restDelta: 0.0002 
+  })
 
   const peek = stackPeekPx(isNarrow, isTablet)
   const pinPaddingBottom = (n - 1) * peek + (isWideDesktop ? 72 : 120)
@@ -327,10 +336,7 @@ function usePublishedFeaturedProjects() {
           .filter((p) => p.published)
           .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 
-        preloadImageUrls(
-          list.map((p) => p.image).filter(Boolean),
-          12
-        )
+        // Precache images ASAP
         list.forEach((p) => {
           if (p.image) {
             const img = new Image()
@@ -367,19 +373,19 @@ export default function Projects() {
     <>
       <motion.h2
         className="fyw-section__title"
-        initial={{ opacity: 0, y: 28 }}
+        initial={{ opacity: 0, y: 18 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={FYW_VIEWPORT_REPEAT}
-        transition={fywRevealTransition(0)}
+        viewport={sectionVp}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
         Featured projects
       </motion.h2>
       <motion.p
         className="fyw-section__lede"
-        initial={{ opacity: 0, y: 22 }}
+        initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={FYW_VIEWPORT_REPEAT}
-        transition={fywRevealTransition(0.06)}
+        viewport={sectionVp}
+        transition={{ duration: 0.45, delay: 0.04, ease: [0.22, 1, 0.36, 1] }}
       >
         Discover how our technology-driven solutions empower businesses and turn ideas into real, impactful products.
       </motion.p>
