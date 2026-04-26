@@ -1275,7 +1275,8 @@ details[open].fyw-mobile-acc summary::after {
 }
 
 .fyw-how__title-tagline {
-  margin: 14px 0 0;
+  margin: 14px auto 0;
+  text-align: center;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1287,6 +1288,7 @@ details[open].fyw-mobile-acc summary::after {
 @media (min-width: 768px) {
   .fyw-how__title-tagline {
     margin-left: auto;
+    margin-right: 0;
     text-align: right;
   }
 }
@@ -1435,8 +1437,8 @@ details[open].fyw-mobile-acc summary::after {
   }
 
   .fyw-how-rail__track {
-    width: max(100%, 720px);
-    padding-right: 8px;
+    width: 100%;
+    padding: 0;
   }
 }
 
@@ -1455,6 +1457,17 @@ details[open].fyw-mobile-acc summary::after {
   overflow: hidden;
 }
 
+@media (max-width: 767px) {
+  .fyw-how-rail__line {
+    top: 0;
+    bottom: 0;
+    left: 8px;
+    right: auto;
+    width: 4px;
+    height: auto;
+  }
+}
+
 .fyw-how-rail__line-bg {
   position: absolute;
   inset: 0;
@@ -1470,6 +1483,13 @@ details[open].fyw-mobile-acc summary::after {
   will-change: transform;
 }
 
+@media (max-width: 767px) {
+  .fyw-how-rail__line-fill {
+    transform-origin: 50% 0;
+    background: linear-gradient(180deg, #0891b2, #7c3aed 50%, #0891b2);
+  }
+}
+
 .fyw-how-rail__stops {
   position: relative;
   z-index: 1;
@@ -1477,7 +1497,16 @@ details[open].fyw-mobile-acc summary::after {
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 4px;
+  gap: 24px;
+}
+
+@media (max-width: 767px) {
+  .fyw-how-rail__stops {
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 40px;
+    padding-left: 32px;
+  }
 }
 
 .fyw-how-rail__stop {
@@ -1491,12 +1520,6 @@ details[open].fyw-mobile-acc summary::after {
 }
 
 @media (max-width: 767px) {
-  .fyw-how-rail__stops {
-    justify-content: flex-start;
-    gap: 12px;
-    flex-wrap: nowrap;
-  }
-
   .fyw-how-rail__stop {
     flex: 0 0 124px;
     min-width: 124px;
@@ -1508,20 +1531,74 @@ details[open].fyw-mobile-acc summary::after {
 }
 
 .fyw-how-rail__dot {
-  width: 11px;
-  height: 11px;
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border: 4px solid var(--fyw-border);
   border-radius: 50%;
-  margin-bottom: 8px;
-  background: var(--fyw-card);
-  border: 2px solid var(--fyw-border);
-  box-shadow: 0 0 0 3px var(--fyw-surface);
+  margin-bottom: 12px;
+  transition: border-color 0.3s var(--fyw-ease-soft);
+}
+
+.fyw-how-rail__stop--active .fyw-how-rail__dot {
+  border-color: var(--fyw-accent);
+}
+
+@media (max-width: 767px) {
+  .fyw-how-rail__dot {
+    position: absolute;
+    left: 2px;
+    margin-bottom: 0;
+  }
+}
+
+.fyw-how-rail__content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .fyw-how-rail__meta {
   display: flex;
   flex-direction: column;
-  gap: 1px;
-  margin-bottom: 6px;
+  gap: 4px;
+}
+
+.fyw-how-rail__step-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fyw-accent);
+}
+
+.fyw-how-rail__description {
+  background: var(--fyw-card);
+  border: 1px solid var(--fyw-border);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: var(--fyw-shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .fyw-how-rail__description {
+    padding: 20px;
+    height: 200px;
+  }
+}
+
+.fyw-how-rail__description h3 {
+  font-size: 0.9rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+  letter-spacing: 0.02em;
+}
+
+.fyw-how-rail__description p {
+  font-size: 0.85rem;
+  color: var(--fyw-muted);
+  line-height: 1.5;
+  margin: 0;
 }
 
 .fyw-how-rail__step-num {
@@ -1771,8 +1848,9 @@ details[open].fyw-mobile-acc summary::after {
 
 @media (max-width: 480px) {
   .fyw-transform {
-    padding-top: 44px;
-    padding-bottom: 44px;
+    margin-top: 150px;
+    padding-top: 40px;
+    padding-bottom: 40px;
   }
 
   .fyw-transform__inner h2 {
@@ -3153,6 +3231,7 @@ details[open].fyw-mobile-acc summary::after {
   line-height: 1.6;
   max-width: 300px;
 }
+
 
 .fyw-logo--footer {
   margin-bottom: 0;

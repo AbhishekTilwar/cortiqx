@@ -2,7 +2,6 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import {
   motion,
   useMotionValueEvent,
-  useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
@@ -90,7 +89,13 @@ function HowProcessRail({ progress, steps: items, railScrollRef, activeStep, isM
           <div className="fyw-how-rail__wrap">
             <div className="fyw-how-rail__line" aria-hidden>
               <div className="fyw-how-rail__line-bg" />
-              <motion.div className="fyw-how-rail__line-fill" style={{ scaleX: lineFill }} />
+              <motion.div
+                className="fyw-how-rail__line-fill"
+                style={{
+                  scaleX: typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches ? 1 : lineFill,
+                  scaleY: typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches ? lineFill : 1,
+                }}
+              />
             </div>
             <div className="fyw-how-rail__stops">
               {items.map((step, i) => (
@@ -101,11 +106,17 @@ function HowProcessRail({ progress, steps: items, railScrollRef, activeStep, isM
                   aria-hidden
                 >
                   <span className="fyw-how-rail__dot" />
-                  <div className="fyw-how-rail__meta">
-                    <span className="fyw-how-rail__step-num">{step.n}</span>
-                    <span className="fyw-how-rail__step-name">{step.rail}</span>
+                  <div className="fyw-how-rail__content">
+                    <div className="fyw-how-rail__meta">
+                      <span className="fyw-how-rail__step-label">
+                        Step {step.n}: {step.rail}
+                      </span>
+                    </div>
+                    <div className="fyw-how-rail__description">
+                      <h3>{step.title}</h3>
+                      <p>{step.desc}</p>
+                    </div>
                   </div>
-                  <div className="fyw-how-rail__chip">{step.title}</div>
                 </motion.div>
               ))}
             </div>
@@ -127,19 +138,15 @@ function HowProcessRail({ progress, steps: items, railScrollRef, activeStep, isM
 export default function HowItWorks() {
   const trackRef = useRef(null)
   const railScrollRef = useRef(null)
-  const detailScrollRef = useRef(null)
-  const reduceMotion = useReducedMotion()
+
   const [activeStep, setActiveStep] = useState(0)
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.matchMedia('(max-width: 767px)').matches : false
   )
 
-  // Track is 400vh to give plenty of room for 5 stages
-  const trackVh = 400
-
   const { scrollYProgress } = useScroll({
     target: trackRef,
-    offset: ['start start', 'end end'],
+    offset: ['start 80%', 'end 20%'],
   })
 
   // Smooth out the scroll progress for a high-end feel
@@ -150,41 +157,34 @@ export default function HowItWorks() {
     restDelta: 0.0002,
   })
 
-  const applyMobileScrollSync = (latest) => {
-    if (typeof window === 'undefined') return
-    if (!window.matchMedia('(max-width: 767px)').matches) return
-    syncScrollToProgress(railScrollRef.current, latest)
-    syncScrollToProgress(detailScrollRef.current, latest)
-  }
-
   useMotionValueEvent(progress, 'change', (latest) => {
-    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches) {
-      const next = activeStepIndex(latest)
-      setActiveStep((prev) => (prev === next ? prev : next))
-    }
-    applyMobileScrollSync(latest)
+    const next = activeStepIndex(latest)
+    setActiveStep((prev) => (prev === next ? prev : next))
   })
 
   useLayoutEffect(() => {
-    const mq = window.matchMedia('(max-width: 767px)')
     const v = progress.get()
+    const mq = window.matchMedia('(max-width: 767px)')
     const onMq = () => setIsMobile(mq.matches)
     onMq()
     mq.addEventListener('change', onMq)
     
+    const applyMobileScrollSync = (val) => {
+      const railEl = railScrollRef.current
+      if (railEl) syncScrollToProgress(railEl, val)
+    }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (mq.matches) setActiveStep(activeStepIndex(v))
     applyMobileScrollSync(v)
 
     const railEl = railScrollRef.current
-    const detailEl = detailScrollRef.current
     const ro = new ResizeObserver(() => {
       if (!mq.matches) return
       const t = progress.get()
       syncScrollToProgress(railEl, t)
-      syncScrollToProgress(detailEl, t)
     })
     if (railEl) ro.observe(railEl)
-    if (detailEl) ro.observe(detailEl)
 
     return () => {
       mq.removeEventListener('change', onMq)
@@ -193,8 +193,7 @@ export default function HowItWorks() {
   }, [progress])
 
   return (
-    <section ref={trackRef} className="fyw-how-track" style={{ height: `${trackVh}vh` }}>
-      <div className="fyw-how-pin">
+    <section ref={trackRef} className="fyw-how-track">
         <div id="how-it-works" className="fyw-section fyw-how">
           <div className="fyw-container fyw-how__inner">
             <div className="fyw-how__title-block">
@@ -232,34 +231,9 @@ export default function HowItWorks() {
                 isMobile={isMobile}
               />
 
-              <div
-                ref={detailScrollRef}
-                className="fyw-how__detail-scroll"
-                role="region"
-                aria-label="Step details — follow page scroll on mobile"
-                tabIndex={0}
-              >
-                <div className="fyw-how__detail-grid">
-                  {steps.map((step, i) => (
-                    <motion.article
-                      key={step.n}
-                      className={`fyw-how__detail${activeStep === i ? ' fyw-how__detail--active' : ''}`}
-                      initial={{ opacity: 0, y: 18 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.2 }}
-                      transition={{ delay: i * 0.05, duration: 0.45 }}
-                    >
-                      <p className="fyw-how__detail-kicker">Step {step.n}</p>
-                      <h3>{step.title}</h3>
-                      <p>{step.desc}</p>
-                    </motion.article>
-                  ))}
-                </div>
-              </div>
             </div>
           </div>
         </div>
-      </div>
     </section>
   )
 }
