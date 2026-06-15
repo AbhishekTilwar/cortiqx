@@ -20,6 +20,7 @@ export default function Home() {
       <HomeJsonLd />
       <div className="fyw-home">
         <Hero />
+        <ClientsSection />
         <Services />
         <WhyUs />
         <HowItWorks />
@@ -27,7 +28,6 @@ export default function Home() {
         <Projects />
         <BuiltSection />
         <Testimonials />
-        <ClientsSection />
         <ContactSection />
       </div>
     </>

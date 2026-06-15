@@ -355,8 +355,8 @@ function usePublishedFeaturedProjects() {
 
 export default function Projects() {
   const reduceMotion = useReducedMotion()
-  const useSimpleList = reduceMotion === true
-  // All viewports use the scroll stack now — the track is tall enough to be readable everywhere
+  const isMobile = useMediaQuery('(max-width: 768px)')
+  const useSimpleList = reduceMotion === true || isMobile
   const useScrollStack = !useSimpleList
   const { projects, ready } = usePublishedFeaturedProjects()
 

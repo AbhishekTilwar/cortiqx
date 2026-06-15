@@ -1,134 +1,79 @@
-/* Built 3D Prism — Rotating Triangle */
-.fyw-built__carousel-viewport {
+/* Built — premium showcase carousel */
+
+.fyw-built-premium {
   position: relative;
+  margin-top: 8px;
+}
+
+.fyw-built-premium__stage {
+  position: relative;
+  min-height: clamp(420px, 58vw, 520px);
+  overflow: hidden;
+}
+
+.fyw-built-premium__slide {
   width: 100%;
-  height: clamp(480px, 72dvh, 620px);
-  /* Tighter viewport height */
-  perspective: 3500px;
-  display: flex;
+}
+
+.fyw-built-premium__card {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: clamp(28px, 4vw, 48px);
   align-items: center;
-  justify-content: center;
-  overflow: visible;
-  padding-bottom: 24px;
-  margin-top: -40px;
-  z-index: 10;
+  padding: clamp(24px, 3.5vw, 36px);
+  border-radius: clamp(20px, 3vw, 28px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: linear-gradient(155deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 4px 24px rgba(15, 23, 42, 0.06),
+    0 24px 64px rgba(15, 23, 42, 0.08);
 }
 
-.fyw-built__sticky-header-wrap {
-  width: 100%;
-  margin-top: 0;
-  margin-bottom: 24px;
-  z-index: 30;
-  position: relative;
+.fyw-built-premium__preview {
+  min-width: 0;
 }
 
-.fyw-built__sticky-header-wrap .fyw-built__header {
-  text-align: center;
+.fyw-built__window--premium {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 12px 40px rgba(15, 23, 42, 0.12),
+    0 0 0 1px rgba(15, 23, 42, 0.06);
 }
 
-.fyw-built__carousel-stage {
-  position: relative;
+.fyw-built__window--premium .fyw-built__window-viewport {
+  aspect-ratio: 16 / 10;
+  max-height: none;
+}
+
+.fyw-built__window--premium .fyw-built__window-viewport > img {
   width: 100%;
   height: 100%;
-  transform-style: preserve-3d;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  touch-action: pan-y;
-  /* Allow vertical scroll, capture horizontal drag */
-  cursor: grab;
+  object-fit: cover;
+  object-position: top center;
 }
 
-.fyw-built__carousel-stage:active {
-  cursor: grabbing;
-}
-
-.fyw-built__carousel-item {
-  position: absolute;
-  width: 1200px;
-  transform-style: preserve-3d;
-  backface-visibility: visible;
-}
-
-.fyw-built__carousel-card {
-  background: var(--fyw-card);
-  border: 1.5px solid var(--fyw-border);
-  box-shadow:
-    0 12px 48px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.8) inset;
-  padding: 20px clamp(32px, 5vw, 48px);
-  overflow: hidden;
-  border-radius: 0;
+.fyw-built-premium__copy {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: opacity 0.5s ease;
-  width: 100%;
-  height: 480px;
-  /* SHORTER HEIGHT to reduce whitespace at the bottom */
-  box-sizing: border-box;
 }
 
-.fyw-built__carousel-card-header {
-  text-align: center;
-  margin-bottom: 2px;
-}
-
-.fyw-built__carousel-card-header h3 {
-  font-size: clamp(1rem, 2vw, 1.45rem);
-  font-weight: 800;
+.fyw-built-premium__copy h3 {
   margin: 0;
+  font-size: clamp(1.15rem, 2.2vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   color: var(--fyw-text);
-  letter-spacing: -0.015em;
 }
 
-.fyw-built__carousel-card-body {
-  display: grid;
-  grid-template-columns: 2.33fr 1fr;
-  gap: 36px;
-  flex: 1;
-  align-items: center;
-  overflow: hidden;
-}
-
-.fyw-built__carousel-image-side {
-  height: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.fyw-built__carousel-image-wrap {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.fyw-built__carousel-image-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: top center;
-  /* Removed white background to make it look tighter when not filling exactly */
-  background: transparent;
-}
-
-.fyw-built__carousel-details-side {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: left;
-  height: 100%;
-}
-
-.fyw-built__carousel-details-side .fyw-service-card__desc {
-  font-size: 0.92rem;
-  line-height: 1.55;
-  margin-bottom: 16px;
-  color: var(--fyw-muted);
+.fyw-built-premium__copy .fyw-service-card__desc {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   line-clamp: 4;
@@ -136,132 +81,110 @@
   overflow: hidden;
 }
 
-.fyw-built__tech-side {
-  margin-bottom: 20px;
-}
-
-.fyw-built__tech-title {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--fyw-muted);
-  margin-bottom: 8px;
-}
-
-.fyw-built__tech-list {
+.fyw-built-premium__controls {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.fyw-built__tech-chip {
-  font-size: 0.7rem;
-  padding: 3px 8px;
-  background: var(--fyw-bg);
-  border: 1px solid var(--fyw-border);
-  border-radius: 4px;
-  color: var(--fyw-text);
-}
-
-.fyw-built__links {
-  display: flex;
-  gap: 12px;
-}
-
-.fyw-built__cta-link {
-  font-size: 0.8rem;
-  padding: 8px 16px;
-  border-radius: 100px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 20px;
+  margin-top: 28px;
 }
 
-.fyw-built__cta-link--primary {
-  background: var(--fyw-text);
-  color: var(--fyw-bg);
-}
-
-.fyw-built__cta-link--secondary {
+.fyw-built-premium__nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   border: 1px solid var(--fyw-border);
+  background: var(--fyw-card);
   color: var(--fyw-text);
+  cursor: pointer;
+  transition:
+    border-color 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s var(--fyw-ease-out),
+    box-shadow 0.25s ease;
+  box-shadow: var(--fyw-shadow-sm);
 }
 
-.fyw-built__carousel-hint {
-  position: absolute;
-  bottom: -45px;
-  left: 50%;
-  transform: translateX(-50%);
-  text-align: center;
-  opacity: 0.5;
-  pointer-events: none;
+.fyw-built-premium__nav:hover {
+  border-color: rgba(8, 145, 178, 0.35);
+  background: var(--fyw-accent-soft);
+  transform: scale(1.05);
 }
 
-@media (max-width: 1024px) {
-  .fyw-built__carousel-viewport {
-    height: clamp(420px, 70vh, 580px);
-    margin-top: -120px;
-  }
+.fyw-built-premium__nav:focus-visible {
+  outline: 2px solid var(--fyw-accent);
+  outline-offset: 2px;
+}
 
-  .fyw-built__carousel-item {
-    width: 820px;
-  }
+.fyw-built-premium__nav svg {
+  width: 20px;
+  height: 20px;
+}
 
-  .fyw-built__carousel-card {
-    height: 420px;
-    padding: 20px 28px;
-  }
+.fyw-built-premium__dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-  .fyw-built__carousel-card-body {
-    grid-template-columns: 1.8fr 1fr;
+.fyw-built-premium__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(148, 163, 184, 0.45);
+  cursor: pointer;
+  transition:
+    transform 0.3s var(--fyw-ease-out),
+    background 0.3s ease,
+    width 0.3s var(--fyw-ease-out);
+}
+
+.fyw-built-premium__dot.is-active {
+  width: 28px;
+  border-radius: 999px;
+  background: var(--fyw-gradient);
+}
+
+.fyw-built-premium__simple {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fyw-built-premium__simple .fyw-built-premium__card {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 900px) {
+  .fyw-built-premium__card {
+    grid-template-columns: 1fr;
     gap: 20px;
+    padding: 20px;
+  }
+
+  .fyw-built-premium__stage {
+    min-height: auto;
   }
 }
 
 @media (max-width: 640px) {
-  .fyw-built__carousel-viewport {
-    height: clamp(520px, 80vh, 720px);
-    perspective: 1500px;
-    margin-top: -10px;
-    /* Pull closer to title on mobile */
+  .fyw-built-premium__copy .fyw-service-card__desc {
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
   }
 
-  .fyw-built__carousel-item {
-    width: 320px;
+  .fyw-built-premium__controls {
+    margin-top: 20px;
+    gap: 14px;
   }
 
-  .fyw-built__carousel-card {
-    height: 520px;
-    padding: 16px;
-    gap: 10px;
-  }
-
-  .fyw-built__carousel-card-body {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1.15fr 1fr;
-    gap: 16px;
-  }
-
-  .fyw-built__carousel-details-side .fyw-service-card__desc {
-    -webkit-line-clamp: 3;
-    line-clamp: 3;
-    font-size: 0.86rem;
-    margin-bottom: 12px;
-  }
-
-  .fyw-built__tech-side {
-    margin-bottom: 12px;
-  }
-
-  .fyw-built__links {
-    gap: 8px;
-  }
-
-  .fyw-built__cta-link {
-    font-size: 0.78rem;
-    padding: 6px 12px;
+  .fyw-built-premium__nav {
+    width: 40px;
+    height: 40px;
   }
 }
