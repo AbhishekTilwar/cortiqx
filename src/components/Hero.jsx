@@ -340,7 +340,7 @@ export default function Hero() {
           <p className="fyw-hero__sub">{BRAND.heroSub}</p>
 
           <div className="fyw-hero__actions">
-            <a href="#projects" className="fyw-btn fyw-btn--outline">
+            <a href="#portfolio" className="fyw-btn fyw-btn--outline">
               View Portfolio
             </a>
             <ConsultationButton className="fyw-btn fyw-btn--primary">

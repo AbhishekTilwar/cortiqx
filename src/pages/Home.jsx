@@ -4,7 +4,7 @@ import WhyUs from '../components/WhyUs.jsx'
 import HowItWorks from '../components/HowItWorks.jsx'
 import TransformCta from '../components/TransformCta.jsx'
 import Projects from '../components/Projects.jsx'
-import BuiltSection from '../components/BuiltSection.jsx'
+import PortfolioSection from '../components/PortfolioSection.jsx'
 import Testimonials from '../components/Testimonials.jsx'
 import ClientsSection from '../components/ClientsSection.jsx'
 import ContactSection from '../components/ContactSection.jsx'
@@ -26,7 +26,7 @@ export default function Home() {
         <HowItWorks />
         <TransformCta />
         <Projects />
-        <BuiltSection />
+        <PortfolioSection />
         <Testimonials />
         <ContactSection />
       </div>
