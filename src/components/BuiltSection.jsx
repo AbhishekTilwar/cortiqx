@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
-import { Link } from 'react-router-dom'
 import { IoChevronBack, IoChevronForward } from 'react-icons/io5'
 import { db } from '../firebase/config'
 import { DOMAINS, projects as staticProjects } from '../data/portfolioData'
@@ -118,16 +117,13 @@ function BuiltProjectCard({ project, domainMeta, imgPriority }) {
           </div>
         )}
 
-        <div className="fyw-built__links">
-          <Link className="fyw-built__cta-link fyw-built__cta-link--primary" to="/#projects">
-            View details
-          </Link>
-          {href && (
-            <a className="fyw-built__cta-link fyw-built__cta-link--secondary" href={href} target="_blank" rel="noreferrer">
+        {href ? (
+          <div className="fyw-built__links">
+            <a className="fyw-built__cta-link fyw-built__cta-link--primary" href={href} target="_blank" rel="noreferrer">
               Live site
             </a>
-          )}
-        </div>
+          </div>
+        ) : null}
       </div>
     </article>
   )

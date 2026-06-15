@@ -85,6 +85,17 @@ function liveUrlHref(url) {
   return `https://${u}`
 }
 
+const HMS_DETAILS_URL = 'https://www.hmstours.in/explore-trips'
+
+function isHmsProject(project) {
+  const hay = `${project.title || ''} ${project.client || ''} ${project.url || ''}`.toLowerCase()
+  return /\bhms\b/.test(hay) || hay.includes('hmstours')
+}
+
+function projectDetailsHref(project) {
+  return isHmsProject(project) ? HMS_DETAILS_URL : null
+}
+
 function PhonePair({ tone, alt }) {
   return (
     <div className="fyw-phone-group" aria-hidden>
@@ -126,6 +137,7 @@ function ProjectCard({ project, index }) {
   const { brand, sep, rest } = splitTitle(project.title)
   const href = liveUrlHref(project.url)
   const displayUrl = liveUrlDisplay(project.url)
+  const detailsHref = projectDetailsHref(project)
 
   return (
     <article className={`fyw-stack-card ${project.theme}`}>
@@ -162,7 +174,18 @@ function ProjectCard({ project, index }) {
               </div>
             ))}
           </div>
-          <ConsultationLink className="fyw-stack-card__cta">VIEW DETAILS</ConsultationLink>
+          {detailsHref ? (
+            <a
+              className="fyw-stack-card__cta"
+              href={detailsHref}
+              target="_blank"
+              rel="noreferrer"
+            >
+              VIEW DETAILS
+            </a>
+          ) : (
+            <ConsultationLink className="fyw-stack-card__cta">VIEW DETAILS</ConsultationLink>
+          )}
         </div>
       </div>
     </article>
