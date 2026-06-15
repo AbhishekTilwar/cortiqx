@@ -33,8 +33,6 @@ const quotes = [
   },
 ]
 
-const avgRating = (quotes.reduce((s, q) => s + q.rating, 0) / quotes.length).toFixed(1)
-
 function StarRow({ value }) {
   const full = Math.min(5, Math.round(value))
 
@@ -66,47 +64,34 @@ export default function Testimonials() {
     <section id="testimonials" className="fyw-section fyw-testi">
       <div className="fyw-testi__bg" aria-hidden />
       <div className="fyw-container fyw-testi__inner">
-        <div className="fyw-testi__header">
-          <motion.div
-            className="fyw-testi__trust"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={FYW_VIEWPORT}
-            transition={fywRevealTransition(0)}
-          >
-            <StarRow value={Number(avgRating)} />
-            <span className="fyw-testi__trust-label">{avgRating} average from {quotes.length} clients</span>
-          </motion.div>
-
-          <motion.h2
-            className="fyw-section__title fyw-testi__title"
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={FYW_VIEWPORT}
-            transition={fywRevealTransition(0.04)}
-          >
-            Testimonials
-          </motion.h2>
-          <motion.p
-            className="fyw-section__lede fyw-testi__lede"
-            initial={{ opacity: 0, y: 22 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={FYW_VIEWPORT}
-            transition={fywRevealTransition(0.08)}
-          >
-            Real stories from businesses we&apos;ve helped build, launch, and grow.
-          </motion.p>
-        </div>
+        <motion.h2
+          className="fyw-section__title"
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={FYW_VIEWPORT}
+          transition={fywRevealTransition(0)}
+        >
+          Testimonials
+        </motion.h2>
+        <motion.p
+          className="fyw-section__lede"
+          initial={{ opacity: 0, y: 22 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={FYW_VIEWPORT}
+          transition={fywRevealTransition(0.06)}
+        >
+          Real stories from businesses we&apos;ve helped build, launch, and grow.
+        </motion.p>
 
         <div className="fyw-testi__grid">
           {quotes.map((q, i) => (
             <motion.article
               key={q.name}
-              className={`fyw-testi-card${i === 0 ? ' fyw-testi-card--featured' : ''}`}
+              className="fyw-testi-card"
               initial={{ opacity: 0, y: 34 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={FYW_VIEWPORT}
-              transition={{ ...fywRevealTransition(0.1 + i * 0.06), ease: FYW_EASE }}
+              transition={{ ...fywRevealTransition(0.08 + i * 0.07), ease: FYW_EASE }}
             >
               <div className="fyw-testi-card__glow" aria-hidden />
               <div className="fyw-testi-card__accent" aria-hidden />
