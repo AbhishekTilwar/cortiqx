@@ -7,6 +7,7 @@ import Projects from '../components/Projects.jsx'
 import PortfolioSection from '../components/PortfolioSection.jsx'
 import Testimonials from '../components/Testimonials.jsx'
 import ClientsSection from '../components/ClientsSection.jsx'
+import PricingPreview from '../components/PricingPreview.jsx'
 import ContactSection from '../components/ContactSection.jsx'
 import Seo from '../seo/Seo.jsx'
 import HomeJsonLd from '../seo/HomeJsonLd.jsx'
@@ -28,6 +29,7 @@ export default function Home() {
         <Projects />
         <PortfolioSection />
         <Testimonials />
+        <PricingPreview />
         <ContactSection />
       </div>
     </>

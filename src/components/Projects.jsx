@@ -156,7 +156,7 @@ function ProjectCard({ project, index }) {
           <div className="fyw-stack-card__meta">
             {[
               ['Client', project.client],
-              ['Live URL', displayUrl || '—'],
+              ['Live URL', displayUrl || 'In development — NDA'],
               ['Deliverables', project.deliverables],
               ['Industry', project.industry],
             ].map(([k, v]) => (

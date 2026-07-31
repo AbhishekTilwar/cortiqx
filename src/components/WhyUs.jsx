@@ -3,9 +3,9 @@ import { animate, motion, useInView } from 'framer-motion'
 import { FYW_VIEWPORT, FYW_EASE, fywRevealTransition } from '../lib/fywMotion.js'
 
 const stats = [
-  { label: 'Projects Completed', count: 50, suffix: '+' },
-  { label: 'Client satisfaction', count: 98, suffix: '%' },
-  { label: 'Happy Clients', count: 30, suffix: '+' },
+  { label: 'Client Satisfaction', count: 98, suffix: '%' },
+  { label: 'Technologies Mastered', count: 20, suffix: '+' },
+  { label: 'On-time Delivery', count: 100, suffix: '%' },
   { label: 'Years of Experience', count: 4, suffix: '+' },
 ]
 
