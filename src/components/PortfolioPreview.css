@@ -27,11 +27,21 @@
   height: 100%;
 }
 
-.portfolio-preview__slide img,
-.portfolio-preview__website img {
+.portfolio-preview__slide img {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Fill the card; crop tall/splash-heavy captures to the media frame */
+.portfolio-preview__website img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 18%;
   display: block;
   user-select: none;
   -webkit-user-drag: none;

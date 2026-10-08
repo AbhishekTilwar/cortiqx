@@ -44,12 +44,27 @@ export function portfolioHeroImage(project) {
   return gallery[0] || null
 }
 
-/** Screenshot service preview when a project has a URL but no uploaded images */
-export function portfolioWebsitePreviewUrl(project, width = 1200) {
+/**
+ * Screenshot URLs for live-site preview when no uploaded images exist.
+ * Landscape crop matches portfolio card (16:10). `wait` skips splash/loaders when supported.
+ * Returns primary + fallback sources (caller can rotate on error).
+ */
+export function portfolioWebsitePreviewUrls(project, { width = 1280, height } = {}) {
   const href = liveUrlHref(project?.url)
-  if (!href) return null
-  const w = Math.min(1600, Math.max(400, Number(width) || 1200))
-  return `https://image.thum.io/get/width/${w}/noanimate/${href}`
+  if (!href) return []
+  const w = Math.min(1600, Math.max(640, Number(width) || 1280))
+  const h = Math.min(1200, Math.max(400, Number(height) || Math.round((w * 10) / 16)))
+  return [
+    // Above-the-fold landscape; wait past splash/animated loaders; short cache so crops refresh
+    `https://image.thum.io/get/width/${w}/crop/${h}/wait/3/maxAge/12/noanimate/${href}`,
+    // Exact WxH fallback if thum.io fails or returns a bad capture
+    `https://s0.wp.com/mshots/v1/${encodeURIComponent(href)}?w=${w}&h=${h}`,
+  ]
+}
+
+/** @deprecated Prefer portfolioWebsitePreviewUrls — kept for preload callers */
+export function portfolioWebsitePreviewUrl(project, width = 1280) {
+  return portfolioWebsitePreviewUrls(project, { width })[0] || null
 }
 
 export const WEB_DEVELOPMENT_DOMAIN = 'web-development'

@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import {
   liveUrlHref,
   portfolioGalleryImages,
-  portfolioWebsitePreviewUrl,
+  portfolioWebsitePreviewUrls,
 } from '../utils/portfolioNormalize'
 import './PortfolioPreview.css'
 
@@ -19,17 +19,24 @@ export default function PortfolioPreview({
 }) {
   const gallery = portfolioGalleryImages(project)
   const href = liveUrlHref(project?.url)
-  const websitePreview = gallery.length === 0 && href ? portfolioWebsitePreviewUrl(project) : null
+  const websiteSources = useMemo(
+    () => (gallery.length === 0 && href ? portfolioWebsitePreviewUrls(project) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- regenerate when project identity/url changes
+    [gallery.length, href, project?.id, project?.url]
+  )
+  const websiteSourcesKey = websiteSources.join('|')
 
   const [index, setIndex] = useState(0)
+  const [sourceIndex, setSourceIndex] = useState(0)
   const [previewFailed, setPreviewFailed] = useState(false)
   const [paused, setPaused] = useState(false)
 
   useEffect(() => {
     setIndex(0)
+    setSourceIndex(0)
     setPreviewFailed(false)
     setPaused(false)
-  }, [project?.id, gallery.length, websitePreview])
+  }, [project?.id, gallery.length, websiteSourcesKey])
 
   const count = gallery.length
   const go = useCallback(
@@ -51,6 +58,16 @@ export default function PortfolioPreview({
   }, [count, project?.id, paused])
 
   const title = project?.title || 'Project'
+  const websiteSrc = !previewFailed && websiteSources[sourceIndex] ? websiteSources[sourceIndex] : null
+
+  const onWebsiteError = () => {
+    if (sourceIndex + 1 < websiteSources.length) {
+      setSourceIndex((i) => i + 1)
+      return
+    }
+    setPreviewFailed(true)
+  }
+
   const placeholder = (
     <div
       className="portfolio-preview__placeholder"
@@ -126,16 +143,17 @@ export default function PortfolioPreview({
         ) : null}
       </div>
     )
-  } else if (websitePreview && !previewFailed) {
+  } else if (websiteSrc) {
     media = (
       <div className="portfolio-preview__website">
         <img
-          src={websitePreview}
+          key={websiteSrc}
+          src={websiteSrc}
           alt={`Preview of ${title}`}
           loading={eager ? 'eager' : 'lazy'}
           decoding="async"
           {...(fetchPriority ? { fetchPriority } : {})}
-          onError={() => setPreviewFailed(true)}
+          onError={onWebsiteError}
         />
         {href ? (
           <span className="portfolio-preview__website-badge" aria-hidden>

@@ -8,7 +8,7 @@ import {
   liveUrlHref,
   normalizePortfolioDoc,
   portfolioGalleryImages,
-  portfolioWebsitePreviewUrl,
+  portfolioWebsitePreviewUrls,
 } from '../utils/portfolioNormalize'
 import { preloadImageUrls } from '../lib/preloadImages.js'
 import Seo from '../seo/Seo.jsx'
@@ -41,8 +41,8 @@ export default function ProjectsPage() {
           const gallery = portfolioGalleryImages(row)
           if (gallery.length) preload.push(...gallery.slice(0, 3))
           else {
-            const shot = portfolioWebsitePreviewUrl(row)
-            if (shot) preload.push(shot)
+            const shots = portfolioWebsitePreviewUrls(row)
+            if (shots[0]) preload.push(shots[0])
           }
         })
         preloadImageUrls(preload.filter(Boolean), 16)
