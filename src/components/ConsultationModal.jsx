@@ -238,9 +238,26 @@ export default function ConsultationModal() {
               <div className="fyw-consultation__panel fyw-consult-modal__panel">
                 {status === 'success' ? (
                   <div className="fyw-consultation__success" role="status" aria-live="polite">
-                    <h3>Submitted successfully</h3>
+                    <motion.span
+                      className="fyw-consultation__success-icon"
+                      aria-hidden
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+                    >
+                      <svg viewBox="0 0 24 24" width="30" height="30" fill="none">
+                        <path
+                          d="M5 12.5l4.5 4.5L19 7.5"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </motion.span>
+                    <h3>Request sent successfully</h3>
                     <p>
-                      Your consultation request was submitted. We have your details and will follow up soon.
+                      Thanks — your consultation request was submitted. We have your details and will follow up soon.
                     </p>
                     {confirmationEmailSent ? (
                       <p>We sent a confirmation email to the address you provided.</p>

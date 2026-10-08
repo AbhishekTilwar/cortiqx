@@ -3040,10 +3040,22 @@ details[open].fyw-mobile-acc summary::after {
 
 .fyw-consultation__success {
   text-align: center;
-  padding: 20px 12px 16px;
+  padding: 28px 12px 20px;
   border-radius: 16px;
   background: rgba(8, 145, 178, 0.06);
   border: 1px solid rgba(8, 145, 178, 0.22);
+}
+.fyw-consultation__success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--fyw-gradient);
+  box-shadow: 0 10px 24px -8px rgba(8, 145, 178, 0.55);
 }
 
 .fyw-consultation__success h3 {
