@@ -2980,15 +2980,11 @@ details[open].fyw-mobile-acc summary::after {
   gap: 18px;
 }
 
+/* Honeypot: fully removed from layout (display:none) so browser/password-manager
+   autofill never targets it. A visually-hidden field still gets autofilled, which
+   was blocking real submissions. */
 .fyw-consultation__hp {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
+  display: none !important;
 }
 
 .fyw-consultation__row {
