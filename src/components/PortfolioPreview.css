@@ -178,6 +178,24 @@
 
 @media (hover: none) {
   .portfolio-preview__nav {
-    opacity: 0.85;
+    opacity: 0.9;
+    /* 44px touch target on phones/tablets */
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  /* Keep the dot visually small but give it a larger invisible tap area */
+  .portfolio-preview__dot {
+    position: relative;
+  }
+
+  .portfolio-preview__dot::after {
+    content: '';
+    position: absolute;
+    inset: -0.55rem;
+  }
+
+  .portfolio-preview__dots {
+    gap: 0.55rem;
   }
 }

@@ -333,9 +333,9 @@ details[open].fyw-mobile-acc summary::after {
 }
 
 .fyw-mobile-acc__body a {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--fyw-muted);
-  padding: 4px 0;
+  padding: 11px 0;
 }
 
 .fyw-mobile-drawer__actions {
@@ -565,6 +565,11 @@ details[open].fyw-mobile-acc summary::after {
     font-size: clamp(1.7rem, 8.5vw, 2.75rem);
     line-height: 1.08;
     margin-bottom: 18px;
+  }
+
+  /* Let the headline wrap naturally on phones; the desktop <br>s cause ragged lines */
+  .fyw-hero__title br {
+    display: none;
   }
 
   .fyw-hero__sub {
@@ -1150,6 +1155,14 @@ details[open].fyw-mobile-acc summary::after {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: 16px;
+}
+
+/* Phones: 2-up reads far better than four cards in one tall column */
+@media (max-width: 480px) {
+  .fyw-why__stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
 }
 
 @media (min-width: 641px) {
@@ -1827,7 +1840,7 @@ details[open].fyw-mobile-acc summary::after {
 
 @media (max-width: 480px) {
   .fyw-transform {
-    margin-top: 150px;
+    margin-top: 0;
     padding-top: 40px;
     padding-bottom: 40px;
   }
