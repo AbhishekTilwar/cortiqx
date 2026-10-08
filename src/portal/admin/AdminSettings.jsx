@@ -90,10 +90,6 @@ export default function AdminSettings() {
       setError('From email is required.')
       return
     }
-    if (!notifyEmail) {
-      setError('Consultation inbox is required.')
-      return
-    }
 
     const prev = existingRef.current || {}
     const typedPass = config.smtpPass.trim()
@@ -272,18 +268,18 @@ export default function AdminSettings() {
           </div>
 
           <div className="admin-settings-row">
-            <label htmlFor="notifyEmail">Consultation inbox *</label>
+            <label htmlFor="notifyEmail">Consultation inbox</label>
             <input
               id="notifyEmail"
               name="notifyEmail"
               type="email"
               value={config.notifyEmail}
               onChange={handleChange}
-              placeholder="you@yourdomain.com"
-              required
+              placeholder="Leave blank to use the SMTP sender address"
             />
             <p className="admin-settings-hint">
-              New consultation requests are sent here. The person who submitted the form also gets a confirmation.
+              Optional. New consultation requests are sent here and the business is kept on CC of the
+              confirmation the person receives. Leave blank to use the SMTP sender address above.
             </p>
           </div>
 

@@ -58,7 +58,10 @@ export async function handleConsultationSubmit(rawBody) {
   }
 
   const mail = await resolveMailConfig()
-  const teamTo = mail.notifyEmail
+  // Consultation inbox is optional now: fall back to the SMTP sender account so
+  // requests still reach the business, and the business is also kept on CC of
+  // the client's confirmation email.
+  const teamTo = mail.notifyEmail || mail.user || ''
   const from = mail.from
   if (!teamTo || !from) {
     return {
@@ -67,7 +70,7 @@ export async function handleConsultationSubmit(rawBody) {
         ok: true,
         emailsSent: false,
         submitted: true,
-        reason: 'Consultation inbox or from address is not set',
+        reason: 'Sender/from address is not set',
       },
     }
   }
@@ -155,6 +158,7 @@ If you didn't submit this form, you can ignore this email.
     await transporter.sendMail({
       from,
       to: email,
+      cc: teamTo,
       subject: 'We received your consultation request',
       text: textClient,
       html: htmlClient,
