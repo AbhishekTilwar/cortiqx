@@ -20,7 +20,13 @@ const TOPICS = [
   { value: 'Other', label: 'Other' },
 ]
 
-/* Honeypot key hp_company_ext — avoid name "website" (browser autofill breaks submit silently). */
+/*
+ * Honeypot field. The name MUST be semantically neutral: browser/profile autofill
+ * targets fields whose name hints at a known value ("website", "company", "email"…),
+ * fills this hidden input, and then every submit silently bails on the spam check —
+ * so the button looks dead. Keep this name meaningless and opt password managers out.
+ */
+const HONEYPOT_FIELD = 'hp_tk'
 const initialForm = {
   name: '',
   email: '',
@@ -28,7 +34,7 @@ const initialForm = {
   company: '',
   topic: '',
   message: '',
-  hp_company_ext: '',
+  [HONEYPOT_FIELD]: '',
 }
 
 export default function ConsultationModal() {
@@ -81,7 +87,7 @@ export default function ConsultationModal() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
-    if (form.hp_company_ext?.trim()) return
+    if (form[HONEYPOT_FIELD]?.trim()) return
 
     const name = form.name.trim()
     const email = form.email.trim()
@@ -259,13 +265,16 @@ export default function ConsultationModal() {
                   <form className="fyw-consultation__form" onSubmit={handleSubmit} noValidate>
                     <input
                       type="text"
-                      name="hp_company_ext"
-                      value={form.hp_company_ext ?? ''}
+                      name={HONEYPOT_FIELD}
+                      value={form[HONEYPOT_FIELD] ?? ''}
                       onChange={handleChange}
                       className="fyw-consultation__hp"
                       tabIndex={-1}
                       autoComplete="off"
                       aria-hidden="true"
+                      data-lpignore="true"
+                      data-1p-ignore="true"
+                      data-form-type="other"
                     />
 
                     <div className="fyw-consultation__row fyw-consultation__row--2">
