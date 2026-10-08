@@ -87,16 +87,26 @@ export default function ConsultationModal() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError(null)
-    if (form[HONEYPOT_FIELD]?.trim()) return
+    console.log('[Consultation] Submit clicked')
+    if (form[HONEYPOT_FIELD]?.trim()) {
+      console.warn('[Consultation] Blocked by honeypot (field was filled, likely autofill):', form[HONEYPOT_FIELD])
+      return
+    }
 
     const name = form.name.trim()
     const email = form.email.trim()
     const message = form.message.trim()
     if (!name || !email || !message) {
+      console.warn('[Consultation] Validation failed — missing required fields', {
+        hasName: Boolean(name),
+        hasEmail: Boolean(email),
+        hasMessage: Boolean(message),
+      })
       setError('Please fill in your name, email, and how we can help.')
       return
     }
 
+    console.log('[Consultation] Validation passed — saving to Firestore…')
     setStatus('sending')
     let inquiryId = null
     const saveTimeoutMs = 28000
@@ -145,9 +155,11 @@ export default function ConsultationModal() {
         saveTimeoutMs
       )
       inquiryId = ref.id
+      console.log('[Consultation] Firestore save OK — inquiryId:', inquiryId)
 
       let mailSent = false
       try {
+        console.log('[Consultation] Calling mail API:', CONSULTATION_API)
         const res = await fetch(CONSULTATION_API, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -164,18 +176,20 @@ export default function ConsultationModal() {
         })
         const data = await res.json().catch(() => ({}))
         mailSent = Boolean(data.emailsSent)
+        console.log('[Consultation] Mail API response:', res.status, data)
         if (!res.ok && !data.ok) {
-          console.warn('[Consultation] Mail API:', res.status, data)
+          console.warn('[Consultation] Mail API returned an error status:', res.status, data)
         }
       } catch (mailErr) {
         console.warn('[Consultation] Mail API unreachable:', mailErr)
       }
 
+      console.log('[Consultation] Showing success message (emailSent:', mailSent, ')')
       setConfirmationEmailSent(mailSent)
       setStatus('success')
       setForm(initialForm)
     } catch (err) {
-      console.error(err)
+      console.error('[Consultation] Submit failed:', err?.code || '', err)
       const msg =
         err?.message === 'save-timeout' || err?.code === 'unavailable'
           ? 'Could not reach our servers in time. Check your connection and try again, or email hello@cortiqx.in.'

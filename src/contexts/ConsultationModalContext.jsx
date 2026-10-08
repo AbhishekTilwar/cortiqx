@@ -15,6 +15,10 @@ export function ConsultationModalProvider({ children }) {
   }, [location.pathname, location.hash])
 
   const openConsultation = useCallback(() => {
+    console.log('[Consultation] Book Free Consultation clicked — opening modal', {
+      pathname: location.pathname,
+      hash: location.hash,
+    })
     if (location.pathname === '/') {
       setOpen(true)
       if (location.hash !== '#consultation') {
