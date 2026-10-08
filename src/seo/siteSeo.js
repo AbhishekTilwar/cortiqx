@@ -13,8 +13,8 @@ export const DEFAULT_DESCRIPTION = BRAND.metaDescription
 export const BRAND_TAGLINE = BRAND.tagline
 export const BRAND_VALUE_PROPOSITION = BRAND.valueProposition
 
-/** Relative path under public/; replace with a 1200×630 JPG/PNG for best social preview support. */
-export const DEFAULT_OG_IMAGE_PATH = '/og-image.svg'
+/** 1200×630 PNG. Raster, because social crawlers ignore SVG Open Graph images. */
+export const DEFAULT_OG_IMAGE_PATH = '/og-image.png'
 
 export function absoluteUrl(path) {
   const p = path.startsWith('/') ? path : `/${path}`

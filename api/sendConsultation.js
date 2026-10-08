@@ -2,7 +2,7 @@ import { handleConsultationSubmit } from './consultationSubmit.js'
 
 /**
  * Vercel serverless: sends team notification + client confirmation.
- * Env: CONSULTATION_NOTIFY_EMAIL, MAIL_FROM, SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_SECURE
+ * SMTP is read from Firestore settings/mail (admin panel). Env vars are a fallback.
  */
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')

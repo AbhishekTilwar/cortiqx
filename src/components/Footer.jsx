@@ -63,15 +63,15 @@ export default function Footer() {
           </ul>
           <h4 className="fyw-footer__social-title">Social</h4>
           <p className="fyw-footer__social">
-            <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">
+            <a href="https://www.linkedin.com" target="_blank" rel="noreferrer nofollow">
               LinkedIn
             </a>
             {' · '}
-            <a href="https://twitter.com" target="_blank" rel="noreferrer">
+            <a href="https://twitter.com" target="_blank" rel="noreferrer nofollow">
               Twitter (X)
             </a>
             {' · '}
-            <a href="https://instagram.com" target="_blank" rel="noreferrer">
+            <a href="https://instagram.com" target="_blank" rel="noreferrer nofollow">
               Instagram
             </a>
           </p>

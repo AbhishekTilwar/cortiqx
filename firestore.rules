@@ -78,7 +78,7 @@ service cloud.firestore {
                        request.resource.data.role == 'Admin';
     }
 
-    // Mail settings (admin only) – Gmail / Nodemailer config
+    // SMTP settings (admin only) – edited in the admin panel, read by the mail API
     match /settings/mail {
       allow read, write: if isAdmin();
     }

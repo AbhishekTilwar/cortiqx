@@ -17,7 +17,12 @@ import { BRAND } from '../seo/brand.js'
 export default function Home() {
   return (
     <>
-      <Seo title={BRAND.homeTitleFocus} description={DEFAULT_DESCRIPTION} path="/" />
+      <Seo
+        title={`${BRAND.name} | ${BRAND.homeTitleFocus}`}
+        description={DEFAULT_DESCRIPTION}
+        path="/"
+        fullTitle
+      />
       <HomeJsonLd />
       <div className="fyw-home">
         <Hero />

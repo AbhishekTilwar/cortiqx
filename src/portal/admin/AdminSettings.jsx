@@ -1,27 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { deleteField, doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { FiMail, FiKey, FiSave, FiAlertCircle } from 'react-icons/fi'
 import './AdminSettings.css'
 
-const AUTH_METHODS = [
-  { value: 'appPassword', label: 'Gmail App Password', hint: 'Use Gmail address + App Password (enable 2FA, then create App Password in Google Account).' },
-  { value: 'oauth2', label: 'OAuth2 (Client ID + Refresh Token)', hint: 'Use OAuth2 credentials and a refresh token from Google OAuth Playground.' },
-  { value: 'serviceAccount', label: 'Service Account (Private Key)', hint: 'Use Google Service Account JSON: client_email and private_key (for G Suite domain-wide delegation).' },
-]
-
 const defaultMailConfig = {
+  smtpHost: '',
+  smtpPort: '587',
+  smtpSecure: false,
+  smtpUser: '',
+  smtpPass: '',
   fromEmail: '',
   fromName: '',
-  authMethod: 'appPassword',
-  appPassword: '',
-  clientId: '',
-  clientSecret: '',
-  refreshToken: '',
-  clientEmail: '',
-  privateKey: '',
-  serviceClientId: '',
+  notifyEmail: '',
+  hasPassword: false,
 }
 
 export default function AdminSettings() {
@@ -30,6 +23,7 @@ export default function AdminSettings() {
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
   const [error, setError] = useState(null)
+  const existingRef = useRef(null)
 
   useEffect(() => {
     const load = async () => {
@@ -38,17 +32,19 @@ export default function AdminSettings() {
         const snap = await getDoc(ref)
         if (snap.exists() && snap.data()) {
           const data = snap.data()
+          const hasPassword = Boolean(String(data.smtpPass || '').trim())
+          const legacyPassword = hasPassword ? '' : String(data.appPassword || '').trim()
+          existingRef.current = { hasPassword, legacyPassword }
           setConfig({
-            fromEmail: data.fromEmail ?? '',
-            fromName: data.fromName ?? '',
-            authMethod: data.authMethod ?? 'appPassword',
-            appPassword: data.appPassword ?? '',
-            clientId: data.clientId ?? '',
-            clientSecret: data.clientSecret ?? '',
-            refreshToken: data.refreshToken ?? '',
-            clientEmail: data.clientEmail ?? '',
-            privateKey: data.privateKey ?? '',
-            serviceClientId: data.serviceClientId ?? '',
+            smtpHost: data.smtpHost || (data.fromEmail ? 'smtp.gmail.com' : ''),
+            smtpPort: data.smtpPort != null && data.smtpPort !== '' ? String(data.smtpPort) : '587',
+            smtpSecure: data.smtpSecure === true,
+            smtpUser: data.smtpUser || data.fromEmail || '',
+            smtpPass: '',
+            fromEmail: data.fromEmail || '',
+            fromName: data.fromName || '',
+            notifyEmail: data.notifyEmail || '',
+            hasPassword: hasPassword || Boolean(legacyPassword),
           })
         }
       } catch (err) {
@@ -61,8 +57,8 @@ export default function AdminSettings() {
   }, [])
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setConfig((prev) => ({ ...prev, [name]: value }))
+    const { name, type, value, checked } = e.target
+    setConfig((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
     setMessage(null)
     setError(null)
   }
@@ -71,26 +67,66 @@ export default function AdminSettings() {
     e.preventDefault()
     setError(null)
     setMessage(null)
-    if (!(config.fromEmail || '').trim()) {
-      setError('From email (Gmail address) is required.')
+
+    const smtpHost = config.smtpHost.trim()
+    const smtpUser = config.smtpUser.trim()
+    const fromEmail = config.fromEmail.trim()
+    const notifyEmail = config.notifyEmail.trim()
+    const port = Number(config.smtpPort)
+
+    if (!smtpHost) {
+      setError('SMTP host is required.')
       return
     }
+    if (!Number.isInteger(port) || port < 1 || port > 65535) {
+      setError('SMTP port must be between 1 and 65535.')
+      return
+    }
+    if (!smtpUser) {
+      setError('SMTP username is required.')
+      return
+    }
+    if (!fromEmail) {
+      setError('From email is required.')
+      return
+    }
+    if (!notifyEmail) {
+      setError('Consultation inbox is required.')
+      return
+    }
+
+    const prev = existingRef.current || {}
+    const typedPass = config.smtpPass.trim()
+    if (!typedPass && !config.hasPassword && !prev.legacyPassword) {
+      setError('SMTP password is required.')
+      return
+    }
+
     setSaving(true)
     try {
       const payload = {
-        fromEmail: (config.fromEmail || '').trim(),
-        fromName: (config.fromName || '').trim(),
-        authMethod: (config.authMethod || 'appPassword').toLowerCase(),
-        appPassword: (config.authMethod === 'appPassword' ? (config.appPassword || '').trim() : ''),
-        clientId: (config.authMethod === 'oauth2' ? (config.clientId || '').trim() : ''),
-        clientSecret: (config.authMethod === 'oauth2' ? (config.clientSecret || '').trim() : ''),
-        refreshToken: (config.authMethod === 'oauth2' ? (config.refreshToken || '').trim() : ''),
-        clientEmail: (config.authMethod === 'serviceAccount' ? (config.clientEmail || '').trim() : ''),
-        privateKey: (config.authMethod === 'serviceAccount' ? (config.privateKey || '').trim() : ''),
-        serviceClientId: (config.authMethod === 'serviceAccount' ? (config.serviceClientId || '').trim() : ''),
+        smtpHost,
+        smtpPort: port,
+        smtpSecure: Boolean(config.smtpSecure),
+        smtpUser,
+        ...(typedPass ? { smtpPass: typedPass } : {}),
+        ...(!typedPass && !prev.hasPassword && prev.legacyPassword ? { smtpPass: prev.legacyPassword } : {}),
+        fromEmail,
+        fromName: config.fromName.trim(),
+        notifyEmail,
+        appPassword: deleteField(),
+        clientId: deleteField(),
+        clientSecret: deleteField(),
+        refreshToken: deleteField(),
+        clientEmail: deleteField(),
+        privateKey: deleteField(),
+        serviceClientId: deleteField(),
+        authMethod: deleteField(),
       }
       await setDoc(doc(db, 'settings', 'mail'), payload, { merge: true })
-      setMessage('Mail settings saved. You can now send mail to candidates from Applications.')
+      existingRef.current = { hasPassword: true, legacyPassword: '' }
+      setConfig((current) => ({ ...current, smtpPass: '', hasPassword: true }))
+      setMessage('SMTP settings saved. Consultation emails and candidate mail use this configuration.')
     } catch (err) {
       setError(err.message || 'Failed to save mail settings.')
     } finally {
@@ -116,8 +152,12 @@ export default function AdminSettings() {
       >
         <div className="admin-settings-header">
           <FiMail className="admin-settings-icon" />
-          <h2>Mail configuration (Gmail)</h2>
-          <p>Configure how the app sends emails to candidates from your Gmail account.</p>
+          <h2>Mail configuration (SMTP)</h2>
+          <p>
+            These details are stored in Firebase and used for consultation emails and mail to candidates.
+            For Gmail, host is smtp.gmail.com, port 587, and the password is a Google App Password.
+            The server also needs a Firebase service account so it can read this document when sending.
+          </p>
         </div>
 
         {error && (
@@ -134,150 +174,118 @@ export default function AdminSettings() {
 
         <form onSubmit={handleSubmit} className="admin-settings-form">
           <div className="admin-settings-row">
-            <label htmlFor="fromEmail">From email (Gmail address) *</label>
+            <label htmlFor="smtpHost">SMTP host *</label>
+            <input
+              id="smtpHost"
+              name="smtpHost"
+              type="text"
+              value={config.smtpHost}
+              onChange={handleChange}
+              placeholder="smtp.gmail.com"
+              autoComplete="off"
+              required
+            />
+          </div>
+
+          <div className="admin-settings-split">
+            <div className="admin-settings-row">
+              <label htmlFor="smtpPort">Port *</label>
+              <input
+                id="smtpPort"
+                name="smtpPort"
+                type="number"
+                min="1"
+                max="65535"
+                value={config.smtpPort}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <label className="admin-settings-check">
+              <input
+                name="smtpSecure"
+                type="checkbox"
+                checked={config.smtpSecure}
+                onChange={handleChange}
+              />
+              Use SSL (port 465)
+            </label>
+          </div>
+
+          <div className="admin-settings-row">
+            <label htmlFor="smtpUser">SMTP username *</label>
+            <input
+              id="smtpUser"
+              name="smtpUser"
+              type="text"
+              value={config.smtpUser}
+              onChange={handleChange}
+              placeholder="hello@yourdomain.com"
+              autoComplete="off"
+              required
+            />
+          </div>
+
+          <div className="admin-settings-row">
+            <label htmlFor="smtpPass">
+              <FiKey /> SMTP password {config.hasPassword ? '' : '*'}
+            </label>
+            <input
+              id="smtpPass"
+              name="smtpPass"
+              type="password"
+              value={config.smtpPass}
+              onChange={handleChange}
+              placeholder={config.hasPassword ? 'Saved — leave blank to keep it' : 'App password or SMTP password'}
+              autoComplete="new-password"
+            />
+            <p className="admin-settings-hint">
+              {config.hasPassword
+                ? 'A password is already stored. Enter a new one only if you want to replace it.'
+                : 'Gmail: Google Account → Security → 2-Step Verification → App passwords.'}
+            </p>
+          </div>
+
+          <div className="admin-settings-row">
+            <label htmlFor="fromEmail">From email *</label>
             <input
               id="fromEmail"
               name="fromEmail"
               type="email"
               value={config.fromEmail}
               onChange={handleChange}
-              placeholder="yourcompany@gmail.com"
+              placeholder="hello@yourdomain.com"
               required
             />
           </div>
+
           <div className="admin-settings-row">
-            <label htmlFor="fromName">From name (optional)</label>
+            <label htmlFor="fromName">From name</label>
             <input
               id="fromName"
               name="fromName"
               type="text"
               value={config.fromName}
               onChange={handleChange}
-              placeholder="Cortiq HR"
+              placeholder="CortiqX"
             />
           </div>
 
           <div className="admin-settings-row">
-            <label>Authentication method</label>
-            <select
-              name="authMethod"
-              value={config.authMethod}
+            <label htmlFor="notifyEmail">Consultation inbox *</label>
+            <input
+              id="notifyEmail"
+              name="notifyEmail"
+              type="email"
+              value={config.notifyEmail}
               onChange={handleChange}
-            >
-              {AUTH_METHODS.map((m) => (
-                <option key={m.value} value={m.value}>{m.label}</option>
-              ))}
-            </select>
+              placeholder="you@yourdomain.com"
+              required
+            />
             <p className="admin-settings-hint">
-              {AUTH_METHODS.find((m) => m.value === config.authMethod)?.hint}
+              New consultation requests are sent here. The person who submitted the form also gets a confirmation.
             </p>
           </div>
-
-          {config.authMethod === 'appPassword' && (
-            <div className="admin-settings-row">
-              <label htmlFor="appPassword">
-                <FiKey /> Gmail App Password *
-              </label>
-              <input
-                id="appPassword"
-                name="appPassword"
-                type="password"
-                value={config.appPassword}
-                onChange={handleChange}
-                placeholder="16-character app password"
-                autoComplete="off"
-              />
-              <p className="admin-settings-hint">
-                Google Account → Security → 2-Step Verification → App passwords. Create one for “Mail”.
-              </p>
-            </div>
-          )}
-
-          {config.authMethod === 'oauth2' && (
-            <>
-              <div className="admin-settings-row">
-                <label htmlFor="clientId">Client ID</label>
-                <input
-                  id="clientId"
-                  name="clientId"
-                  type="text"
-                  value={config.clientId}
-                  onChange={handleChange}
-                  placeholder="xxx.apps.googleusercontent.com"
-                />
-              </div>
-              <div className="admin-settings-row">
-                <label htmlFor="clientSecret">Client Secret</label>
-                <input
-                  id="clientSecret"
-                  name="clientSecret"
-                  type="password"
-                  value={config.clientSecret}
-                  onChange={handleChange}
-                  placeholder="GOCSPX-..."
-                  autoComplete="off"
-                />
-              </div>
-              <div className="admin-settings-row">
-                <label htmlFor="refreshToken">Refresh Token</label>
-                <input
-                  id="refreshToken"
-                  name="refreshToken"
-                  type="text"
-                  value={config.refreshToken}
-                  onChange={handleChange}
-                  placeholder="1//..."
-                />
-                <p className="admin-settings-hint">
-                  Use Google OAuth 2.0 Playground to get a refresh token with scope https://mail.google.com/
-                </p>
-              </div>
-            </>
-          )}
-
-          {config.authMethod === 'serviceAccount' && (
-            <>
-              <div className="admin-settings-row">
-                <label htmlFor="clientEmail">Service account client email</label>
-                <input
-                  id="clientEmail"
-                  name="clientEmail"
-                  type="email"
-                  value={config.clientEmail}
-                  onChange={handleChange}
-                  placeholder="xxx@xxx.iam.gserviceaccount.com"
-                />
-              </div>
-              <div className="admin-settings-row">
-                <label htmlFor="privateKey">
-                  <FiKey /> Private key (from service account JSON) *
-                </label>
-                <textarea
-                  id="privateKey"
-                  name="privateKey"
-                  value={config.privateKey}
-                  onChange={handleChange}
-                  placeholder="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
-                  rows={6}
-                  className="admin-settings-textarea"
-                />
-                <p className="admin-settings-hint">
-                  Paste the private_key value from your Google Service Account JSON. Used for Gmail with domain-wide delegation.
-                </p>
-              </div>
-              <div className="admin-settings-row">
-                <label htmlFor="serviceClientId">Service client ID (optional)</label>
-                <input
-                  id="serviceClientId"
-                  name="serviceClientId"
-                  type="text"
-                  value={config.serviceClientId}
-                  onChange={handleChange}
-                  placeholder="xxx.apps.googleusercontent.com"
-                />
-              </div>
-            </>
-          )}
 
           <div className="admin-settings-actions">
             <motion.button
@@ -288,7 +296,7 @@ export default function AdminSettings() {
               whileTap={{ scale: 0.98 }}
             >
               <FiSave />
-              {saving ? 'Saving…' : 'Save mail settings'}
+              {saving ? 'Saving…' : 'Save SMTP settings'}
             </motion.button>
           </div>
         </form>

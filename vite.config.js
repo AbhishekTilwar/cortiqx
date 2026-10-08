@@ -23,19 +23,20 @@ function injectBrandMetaPlugin() {
         .replace(/__CX_TWITTER_TITLE__/g, p.twitterTitle)
         .replace(/__CX_TWITTER_DESCRIPTION__/g, p.twitterDescription)
         .replace(/__CX_TWITTER_IMAGE__/g, p.twitterImage)
-        .replace(/__CX_DOCUMENT_TITLE__/g, p.documentTitle)
+        .replace(/__CX_DOCUMENT_TITLE__/g, () => p.documentTitle)
+        .replace(/__CX_JSON_LD__/g, () => p.jsonLd)
     },
   }
 }
 
-/** Dev-only: same handler as Vercel `/api/sendConsultation` so local `npm run dev` can POST the form. */
-function consultationApiDevPlugin() {
+/** Dev-only: same handlers as Vercel `/api/sendConsultation` and `/api/sendMail`. */
+function mailApiDevPlugin() {
   return {
-    name: 'cortiqx-consultation-api-dev',
+    name: 'cortiqx-mail-api-dev',
     configureServer(server) {
       server.middlewares.use(async (req, res, next) => {
         const pathname = (req.url || '').split('?')[0]
-        if (pathname !== '/api/sendConsultation') {
+        if (pathname !== '/api/sendConsultation' && pathname !== '/api/sendMail') {
           return next()
         }
 
@@ -50,7 +51,7 @@ function consultationApiDevPlugin() {
 
         res.setHeader('Access-Control-Allow-Origin', '*')
         res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
         if (req.method === 'OPTIONS') {
           res.statusCode = 204
@@ -77,8 +78,18 @@ function consultationApiDevPlugin() {
           return res.end(JSON.stringify({ ok: false, error: 'Invalid JSON' }))
         }
 
-        const { handleConsultationSubmit } = await import('./api/consultationSubmit.js')
-        const { statusCode, payload } = await handleConsultationSubmit(body)
+        const handler =
+          pathname === '/api/sendMail'
+            ? async () => {
+                const { handleSendMail } = await import('./api/sendMail.js')
+                return handleSendMail(body, req.headers.authorization)
+              }
+            : async () => {
+                const { handleConsultationSubmit } = await import('./api/consultationSubmit.js')
+                return handleConsultationSubmit(body)
+              }
+
+        const { statusCode, payload } = await handler()
         res.statusCode = statusCode
         res.setHeader('Content-Type', 'application/json')
         res.end(JSON.stringify(payload))
@@ -89,7 +100,7 @@ function consultationApiDevPlugin() {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), injectBrandMetaPlugin(), consultationApiDevPlugin()],
+  plugins: [react(), injectBrandMetaPlugin(), mailApiDevPlugin()],
   build: {
     target: 'es2022',
     cssMinify: true,

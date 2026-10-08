@@ -92,14 +92,14 @@ export default function Pricing() {
   return (
     <section id="pricing" className="fyw-section fyw-pricing">
       <div className="fyw-container">
-        <motion.h2
+        <motion.h1
           className="fyw-section__title"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
           CHOOSE YOUR PLAN
-        </motion.h2>
+        </motion.h1>
         <motion.p
           className="fyw-section__lede"
           initial={{ opacity: 0, y: 16 }}

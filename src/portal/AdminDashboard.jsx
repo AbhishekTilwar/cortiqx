@@ -969,7 +969,7 @@ const AdminDashboard = () => {
       }, 2000)
     } catch (err) {
       const msg = err.message || (err.details && err.details.message) || ''
-      const fallback = err.code === 'functions/unauthenticated' ? 'Please sign in again.' : err.code === 'functions/permission-denied' ? 'Only admins can send mail.' : err.code === 'functions/unavailable' || err.code === 'unavailable' ? 'Mail service unavailable. Deploy Cloud Functions (see MAIL_SETUP.md) and try again.' : 'Failed to send mail. Check Settings → Mail configuration.'
+      const fallback = err.code === 'functions/unauthenticated' ? 'Please sign in again.' : err.code === 'functions/permission-denied' ? 'Only admins can send mail.' : err.code === 'functions/unavailable' || err.code === 'unavailable' ? 'Mail service unavailable. Check Settings and the server Firebase service account.' : 'Failed to send mail. Check Settings → Mail configuration.'
       setError(msg || fallback)
       setMailResult({ success: false, message: msg || fallback })
     } finally {

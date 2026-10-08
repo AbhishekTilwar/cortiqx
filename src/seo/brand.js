@@ -25,7 +25,7 @@ export const BRAND = {
    * No unescaped `"` (build injects into HTML attributes).
    */
   metaDescription:
-    'Product studio for Flutter apps, web, UX, and AI. CortiqX Labs delivers end-to-end software for startups and teams: clear scope, rapid cycles, App Store-ready launches, and long-term support.',
+    'CortiqX Labs builds Flutter apps, web products, UX, and AI for startups. Clear scope, fast launches, App Store-ready delivery, and support after you go live.',
 
   metaKeywords: [
     'CortiqX',
@@ -60,7 +60,7 @@ export const BRAND = {
     'CortiqX Labs pricing: transparent plans for MVPs, full product builds, and ongoing support. Flutter, web, and design—scoped for startups and growing teams.',
 
   portfolioMetaDescription:
-    'Explore CortiqX Labs portfolio: shipped Flutter and web products, UX, and custom software—case studies and live work across industries.',
+    'Browse the CortiqX Labs portfolio: Flutter apps, web products, UX, and custom software we have shipped, plus case studies and live work across industries.',
 
   /** JSON-LD: Organization.slogan */
   slogan: 'Ideas to launch. Products that last.',

@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { resolveMailConfig } from './mailSettings.js'
 
 function escapeHtml(s) {
   return String(s ?? '')
@@ -8,17 +9,15 @@ function escapeHtml(s) {
     .replace(/"/g, '&quot;')
 }
 
-function buildTransporter() {
-  const host = process.env.SMTP_HOST
-  const user = process.env.SMTP_USER
-  if (!host || !user) return null
+function buildTransporter(mail) {
+  if (!mail?.host || !mail?.user || !mail?.pass) return null
   return nodemailer.createTransport({
-    host,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === 'true',
+    host: mail.host,
+    port: mail.port,
+    secure: mail.secure,
     auth: {
-      user,
-      pass: process.env.SMTP_PASS || '',
+      user: mail.user,
+      pass: mail.pass,
     },
   })
 }
@@ -58,8 +57,9 @@ export async function handleConsultationSubmit(rawBody) {
     return { statusCode: 400, payload: { ok: false, error: 'Invalid email address.' } }
   }
 
-  const teamTo = (process.env.CONSULTATION_NOTIFY_EMAIL || '').trim()
-  const from = (process.env.MAIL_FROM || process.env.SMTP_USER || '').trim()
+  const mail = await resolveMailConfig()
+  const teamTo = mail.notifyEmail
+  const from = mail.from
   if (!teamTo || !from) {
     return {
       statusCode: 200,
@@ -67,12 +67,12 @@ export async function handleConsultationSubmit(rawBody) {
         ok: true,
         emailsSent: false,
         submitted: true,
-        reason: 'CONSULTATION_NOTIFY_EMAIL or MAIL_FROM not set',
+        reason: 'Consultation inbox or from address is not set',
       },
     }
   }
 
-  const transporter = buildTransporter()
+  const transporter = buildTransporter(mail)
   if (!transporter) {
     return {
       statusCode: 200,
