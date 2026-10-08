@@ -94,30 +94,6 @@
   overflow: hidden;
 }
 
-.projects-page__preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.projects-page__preview-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(145deg, var(--fyw-elevated), var(--fyw-surface));
-}
-
-.projects-page__preview-placeholder span {
-  font-size: clamp(2.5rem, 6vw, 3.5rem);
-  font-weight: 800;
-  color: var(--pp-domain, var(--fyw-accent));
-  opacity: 0.35;
-  font-family: var(--fyw-display);
-  letter-spacing: -0.04em;
-}
-
 .projects-page__body {
   padding: 1.25rem 1.35rem 1.5rem;
   display: flex;

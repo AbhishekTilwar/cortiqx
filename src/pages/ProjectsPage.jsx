@@ -4,18 +4,17 @@ import { Link } from 'react-router-dom'
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { DOMAINS } from '../data/portfolioData'
-import { normalizePortfolioDoc, portfolioHeroImage } from '../utils/portfolioNormalize'
+import {
+  liveUrlHref,
+  normalizePortfolioDoc,
+  portfolioGalleryImages,
+  portfolioWebsitePreviewUrl,
+} from '../utils/portfolioNormalize'
 import { preloadImageUrls } from '../lib/preloadImages.js'
 import Seo from '../seo/Seo.jsx'
 import { BRAND } from '../seo/brand.js'
+import PortfolioPreview from '../components/PortfolioPreview.jsx'
 import './ProjectsPage.css'
-
-function liveUrlHref(url) {
-  const u = (url || '').trim()
-  if (!u) return null
-  if (/^https?:\/\//i.test(u)) return u
-  return `https://${u}`
-}
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([])
@@ -37,12 +36,16 @@ export default function ProjectsPage() {
             projectStatus: data.projectStatus === 'ongoing' ? 'ongoing' : 'delivered',
           }
         })
-        const heroUrls = list.map((row) => portfolioHeroImage(row)).filter(Boolean)
-        preloadImageUrls(heroUrls, 16)
-        heroUrls.forEach((src) => {
-          const img = new Image()
-          img.src = src
+        const preload = []
+        list.forEach((row) => {
+          const gallery = portfolioGalleryImages(row)
+          if (gallery.length) preload.push(...gallery.slice(0, 3))
+          else {
+            const shot = portfolioWebsitePreviewUrl(row)
+            if (shot) preload.push(shot)
+          }
         })
+        preloadImageUrls(preload.filter(Boolean), 16)
 
         setProjects(list)
         setReady(true)
@@ -93,7 +96,6 @@ export default function ProjectsPage() {
           <div className="fyw-container projects-page__grid-wrap">
             <ul className="projects-page__grid">
               {projects.map((p, index) => {
-                const src = portfolioHeroImage(p)
                 const domainMeta = DOMAINS[p.domain] || { label: p.domain || 'Project', color: 'var(--fyw-accent)' }
                 const href = liveUrlHref(p.url)
                 const eager = index < 8
@@ -101,22 +103,12 @@ export default function ProjectsPage() {
                   <li key={p.id} className="projects-page__card">
                     <div className="projects-page__card-inner">
                       <div className="projects-page__preview">
-                        {src ? (
-                          <img
-                            src={src}
-                            alt=""
-                            loading={eager ? 'eager' : 'lazy'}
-                            decoding="async"
-                            {...(index < 3 ? { fetchPriority: 'high' } : index >= 8 ? { fetchPriority: 'low' } : {})}
-                          />
-                        ) : (
-                          <div
-                            className="projects-page__preview-placeholder"
-                            style={{ '--pp-domain': domainMeta.color }}
-                          >
-                            <span aria-hidden>{(p.title || '?').slice(0, 1)}</span>
-                          </div>
-                        )}
+                        <PortfolioPreview
+                          project={p}
+                          domainColor={domainMeta.color}
+                          eager={eager}
+                          fetchPriority={index < 3 ? 'high' : index >= 8 ? 'low' : undefined}
+                        />
                       </div>
                       <div className="projects-page__body">
                         <div className="projects-page__meta-row">

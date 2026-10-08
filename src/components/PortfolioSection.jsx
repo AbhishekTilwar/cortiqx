@@ -4,19 +4,18 @@ import { Link } from 'react-router-dom'
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore'
 import { db } from '../firebase/config'
 import { DOMAINS } from '../data/portfolioData'
-import { normalizePortfolioDoc, portfolioHeroImage } from '../utils/portfolioNormalize'
+import {
+  liveUrlHref,
+  normalizePortfolioDoc,
+  portfolioGalleryImages,
+  portfolioWebsitePreviewUrl,
+} from '../utils/portfolioNormalize'
 import { preloadImageUrls } from '../lib/preloadImages.js'
 import { FYW_VIEWPORT, fywRevealTransition } from '../lib/fywMotion.js'
+import PortfolioPreview from './PortfolioPreview.jsx'
 import './PortfolioSection.css'
 
 const HOME_LIMIT = 6
-
-function liveUrlHref(url) {
-  const u = (url || '').trim()
-  if (!u) return null
-  if (/^https?:\/\//i.test(u)) return u
-  return `https://${u}`
-}
 
 function usePortfolioProjects() {
   const [projects, setProjects] = useState([])
@@ -34,10 +33,16 @@ function usePortfolioProjects() {
             projectStatus: data.projectStatus === 'ongoing' ? 'ongoing' : 'delivered',
           }
         })
-        preloadImageUrls(
-          list.map((row) => portfolioHeroImage(row)).filter(Boolean),
-          12
-        )
+        const preload = []
+        list.forEach((row) => {
+          const gallery = portfolioGalleryImages(row)
+          if (gallery.length) preload.push(...gallery.slice(0, 3))
+          else {
+            const shot = portfolioWebsitePreviewUrl(row)
+            if (shot) preload.push(shot)
+          }
+        })
+        preloadImageUrls(preload.filter(Boolean), 12)
         setProjects(list)
         setReady(true)
       },
@@ -87,7 +92,6 @@ export default function PortfolioSection() {
 
         <ul className="fyw-portfolio__grid">
           {visible.map((p, index) => {
-            const src = portfolioHeroImage(p)
             const domainMeta = DOMAINS[p.domain] || { label: p.domain || 'Project', color: 'var(--fyw-accent)' }
             const href = liveUrlHref(p.url)
             const eager = index < 4
@@ -103,22 +107,12 @@ export default function PortfolioSection() {
               >
                 <div className="fyw-portfolio__card-inner">
                   <div className="fyw-portfolio__preview">
-                    {src ? (
-                      <img
-                        src={src}
-                        alt=""
-                        loading={eager ? 'eager' : 'lazy'}
-                        decoding="async"
-                        {...(index < 2 ? { fetchPriority: 'high' } : index >= 4 ? { fetchPriority: 'low' } : {})}
-                      />
-                    ) : (
-                      <div
-                        className="fyw-portfolio__preview-placeholder"
-                        style={{ '--pp-domain': domainMeta.color }}
-                      >
-                        <span aria-hidden>{(p.title || '?').slice(0, 1)}</span>
-                      </div>
-                    )}
+                    <PortfolioPreview
+                      project={p}
+                      domainColor={domainMeta.color}
+                      eager={eager}
+                      fetchPriority={index < 2 ? 'high' : index >= 4 ? 'low' : undefined}
+                    />
                   </div>
                   <div className="fyw-portfolio__body">
                     <div className="fyw-portfolio__meta-row">

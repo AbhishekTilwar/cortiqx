@@ -14,11 +14,42 @@ export function normalizePortfolioDoc(data, id) {
   }
 }
 
+/** Absolute https URL for live project link, or null */
+export function liveUrlHref(url) {
+  const u = (url || '').trim()
+  if (!u) return null
+  if (/^https?:\/\//i.test(u)) return u
+  return `https://${u}`
+}
+
+/** Deduped gallery: main image first, then additional images */
+export function portfolioGalleryImages(project) {
+  if (!project) return []
+  const seen = new Set()
+  const out = []
+  const push = (raw) => {
+    if (typeof raw !== 'string') return
+    const u = raw.trim()
+    if (!u || seen.has(u)) return
+    seen.add(u)
+    out.push(u)
+  }
+  push(project.image)
+  if (Array.isArray(project.images)) project.images.forEach(push)
+  return out
+}
+
 export function portfolioHeroImage(project) {
-  if (!project) return null
-  if (project.image?.trim()) return project.image.trim()
-  const first = project.images?.find((u) => typeof u === 'string' && u.trim())
-  return first ? first.trim() : null
+  const gallery = portfolioGalleryImages(project)
+  return gallery[0] || null
+}
+
+/** Screenshot service preview when a project has a URL but no uploaded images */
+export function portfolioWebsitePreviewUrl(project, width = 1200) {
+  const href = liveUrlHref(project?.url)
+  if (!href) return null
+  const w = Math.min(1600, Math.max(400, Number(width) || 1200))
+  return `https://image.thum.io/get/width/${w}/noanimate/${href}`
 }
 
 export const WEB_DEVELOPMENT_DOMAIN = 'web-development'
